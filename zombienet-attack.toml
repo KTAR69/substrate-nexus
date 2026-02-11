@@ -1,0 +1,33 @@
+[relaychain]
+chain = "rococo-local"
+default_command = "polkadot"
+
+[[relaychain.nodes]]
+name = "alice"
+validator = true
+
+[[relaychain.nodes]]
+name = "bob"
+validator = true
+
+[[parachains]]
+id = 2000
+accumulate_events = true
+
+[[parachains.collators]]
+name = "nexus-collator"
+command = "./target/release/solochain-template-node"
+args = ["--force-authoring"]
+
+[[parachains]]
+id = 2001
+accumulate_events = true
+
+[[parachains.collators]]
+name = "mock-sibling-collator"
+command = "polkadot-parachain"
+args = ["--force-authoring"]
+
+[types.registration]
+extrinsic = "pallet_consulting.register_consultant"
+args = ["Mock Consultant"]

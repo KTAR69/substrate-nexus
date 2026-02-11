@@ -1,1 +1,26 @@
+# Rust / Substrate
 target/
+.cargo/
+
+# Keys / Secrets
+.env
+.firebaserc
+chain_spec_raw.json
+node/src/chain_spec_raw.rs
+keystore/
+*.key
+*.private
+*.p12
+*.json
+
+# Dependencies
+node_modules/
+package-lock.json
+npm-debug.log
+
+# IDE
+.vscode/
+.idea/
+
+# Artifacts
+docs/assets/mobile_showcase.image.png

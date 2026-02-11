@@ -162,3 +162,39 @@ impl pallet_template::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = pallet_template::weights::SubstrateWeight<Runtime>;
 }
+
+parameter_types! {
+	pub const MaxNameLength: u32 = 64;
+	pub const RegistrationDeposit: Balance = 10 * super::UNIT;
+}
+
+/// Configure the pallet-consulting in pallets/consulting.
+pub struct AllowTrustedParachainOrSigned;
+impl frame_support::traits::EnsureOrigin<RuntimeOrigin> for AllowTrustedParachainOrSigned {
+	type Success = AccountId;
+	fn try_origin(o: RuntimeOrigin) -> Result<Self::Success, RuntimeOrigin> {
+		frame_system::EnsureSigned::try_origin(o)
+	}
+}
+
+pub struct AliceVerifier;
+impl frame_support::traits::EnsureOrigin<RuntimeOrigin> for AliceVerifier {
+	type Success = ();
+	fn try_origin(o: RuntimeOrigin) -> Result<Self::Success, RuntimeOrigin> {
+		let who = frame_system::EnsureSigned::try_origin(o)?;
+		// Alice's address (converted to AccountId)
+		// For simplicity in simulation, we just check if it's signed.
+		// In production, this would be a specific multisig or oracle key.
+		Ok(())
+	}
+}
+
+impl pallet_consulting::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type MaxNameLength = MaxNameLength;
+	type RegistrationDeposit = RegistrationDeposit;
+	type Currency = Balances;
+	type RegistrationOrigin = AllowTrustedParachainOrSigned;
+	type VerifierOrigin = AliceVerifier;
+	type WeightInfo = pallet_consulting::weights::SubstrateWeight<Runtime>;
+}
