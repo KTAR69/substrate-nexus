@@ -27,6 +27,7 @@ pallet-balances.workspace = true
 pallet-grandpa.workspace = true
 pallet-sudo.workspace = true
 pallet-template.workspace = true
+pallet-consulting = { path = "../pallets/consulting", default-features = false }
 pallet-timestamp.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
 pallet-transaction-payment.workspace = true
@@ -67,6 +68,7 @@ std = [
 	"pallet-grandpa/std",
 	"pallet-sudo/std",
 	"pallet-template/std",
+	"pallet-consulting/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
@@ -118,15 +120,5 @@ try-runtime = [
 	"sp-runtime/try-runtime",
 ]
 
-# Enable the metadata hash generation.
-#
-# This is hidden behind a feature because it increases the compile time.
-# The wasm binary needs to be compiled twice, once to fetch the metadata,
-# generate the metadata hash and then a second time with the
-# `RUNTIME_METADATA_HASH` environment variable set for the `CheckMetadataHash`
-# extension.
 metadata-hash = ["substrate-wasm-builder/metadata-hash"]
-
-# A convenience feature for enabling things when doing a build
-# for an on-chain release.
 on-chain-release-build = ["metadata-hash", "sp-api/disable-logging"]

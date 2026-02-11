@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substrate Consulting Nexus | Industrial Web3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <header class="navbar">
+            <div class="logo">
+                <span class="logo-icon">⬡</span>
+                <span class="logo-text">NEXUS_OS</span>
+            </div>
+            <div class="connection-status">
+                <span class="status-indicator live"></span>
+                <span class="status-text">PASEO: CONNECTED</span>
+            </div>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Metric Card 1: Network Health -->
+            <section class="card health-card">
+                <div class="card-header">
+                    <h3>NETWORK_HEALTH</h3>
+                    <span class="metric-value" id="block-height">#00,000,000</span>
+                </div>
+                <div class="card-body">
+                    <div class="pulse-gauge">
+                        <svg viewBox="0 0 100 20" class="pulse-line">
+                            <polyline points="0,10 20,10 25,2 30,18 35,10 100,10" />
+                        </svg>
+                    </div>
+                    <div class="stat-row">
+                        <span class="label">FINALIZED</span>
+                        <span class="value success">YES</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Metric Card 2: Coretime Status -->
+            <section class="card coretime-card">
+                <div class="card-header">
+                    <h3>CORETIME_ASSIGNMENT</h3>
+                    <span class="metric-value">PARA_ID 5126</span>
+                </div>
+                <div class="card-body">
+                    <div class="status-badge active">ON_DEMAND_ACTIVE</div>
+                    <div class="stat-row">
+                        <span class="label">REGION</span>
+                        <span class="value">GLOBAL</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Metric Card 3: AI Gatekeeper -->
+            <section class="card ai-card">
+                <div class="card-header">
+                    <h3>AI_GATEKEEPER</h3>
+                    <span class="metric-value">KMS_SECURED</span>
+                </div>
+                <div class="card-body">
+                    <div class="log-stream" id="audit-log">
+                        <div class="log-entry">
+                            <span class="timestamp">[14:30:22]</span>
+                            <span class="event">System Initialized.</span>
+                        </div>
+                        <div class="log-entry">
+                            <span class="timestamp">[14:31:05]</span>
+                            <span class="event">KMS Link Established.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

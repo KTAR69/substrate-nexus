@@ -5883,6 +5883,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-consulting"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-grandpa"
 version = "40.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -9470,6 +9486,7 @@ dependencies = [
  "frame-try-runtime",
  "pallet-aura",
  "pallet-balances",
+ "pallet-consulting",
  "pallet-grandpa",
  "pallet-sudo",
  "pallet-template",
