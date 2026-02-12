@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const time = new Date().toLocaleTimeString('en-US', { hour12: false });
 
         const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.innerHTML = `<span class="timestamp">[${time}]</span><span class="event">${msg}</span>`;
+        entry.className = 'flex gap-2 text-gray-500 font-mono text-xs';
+        entry.innerHTML = `<span>[${time}]</span><span class="text-white">${msg}</span>`;
 
         auditLog.prepend(entry);
 
