@@ -1,0 +1,21 @@
+{
+  "name": "Substrate Node Template",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "forwardPorts": [5173, 9944],
+  "portsAttributes": {
+    "5173": {
+      "label": "Frontend",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    },
+    "9944": {
+      "label": "Node RPC",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y protobuf-compiler clang && rustup update && rustup component add rust-src && cd frontend && npm install"
+}
