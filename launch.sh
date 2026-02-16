@@ -11,7 +11,9 @@ cargo run --release --bin solochain-template-node -- --dev --tmp --rpc-external 
 echo "💻 Starting Frontend..."
 cd frontend
 # Ensure dependencies are installed
-npm install
+if [ ! -d "node_modules" ]; then
+    npm install
+fi
 npm run dev -- --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
 cd ..
 

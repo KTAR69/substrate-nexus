@@ -1,0 +1,33 @@
+[package]
+name = "pallet-depin-desci"
+version = "4.0.0-dev"
+description = "FRAME pallet for DePIN and DeSci data attestation"
+authors = ["Substrate Nexus"]
+homepage = "https://github.com/substrate-developer-hub/substrate-node-template"
+edition = "2021"
+license = "Unlicense"
+publish = false
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+codec = { workspace = true, features = ["derive"] }
+scale-info = { workspace = true, features = ["derive"] }
+frame-support = { workspace = true }
+frame-system = { workspace = true }
+serde = { version = "1.0.197", features = ["derive"], default-features = false }
+
+[features]
+default = ["std"]
+std = [
+	"codec/std",
+	"frame-support/std",
+	"frame-system/std",
+	"scale-info/std",
+    "serde/std",
+]
+try-runtime = [
+	"frame-support/try-runtime",
+	"frame-system/try-runtime",
+]
