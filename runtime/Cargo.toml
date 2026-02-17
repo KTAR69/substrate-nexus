@@ -33,6 +33,9 @@ pallet-template.workspace = true
 pallet-timestamp.workspace = true
 pallet-transaction-payment.workspace = true
 pallet-transaction-payment-rpc-runtime-api.workspace = true
+pallet-depin-desci = { path = "../pallets/depin-desci", default-features = false }
+pallet-session.workspace = true
+pallet-staking.workspace = true
 scale-info = { features = ["derive", "serde"], workspace = true }
 serde_json = { workspace = true, default-features = false, features = ["alloc"] }
 sp-api.workspace = true
@@ -73,6 +76,9 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+    "pallet-depin-desci/std",
+    "pallet-session/std",
+    "pallet-staking/std",
 	"scale-info/std",
 	"serde_json/std",
 	"sp-api/std",
@@ -114,8 +120,11 @@ try-runtime = [
 	"pallet-grandpa/try-runtime",
 	"pallet-sudo/try-runtime",
 	"pallet-template/try-runtime",
+    "pallet-depin-desci/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
+    "pallet-session/try-runtime",
+    "pallet-staking/try-runtime",
 	"sp-runtime/try-runtime",
 ]
 
