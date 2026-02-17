@@ -1,5 +1,15 @@
 {
+  "name": "texas-root-tools",
+  "version": "1.0.0",
+  "scripts": {
+    "sentry": "node live_sentry.js",
+    "submit": "node submit_reading.js",
+    "status": "./briefing.sh",
+    "check": "node verify_state.js",
+    "cleanup": "rm -rf target/debug && rm -rf target/release/build target/release/deps && echo 'Disk space reclaimed.'"
+  },
   "dependencies": {
-    "@polkadot/api": "^16.5.4"
+    "@polkadot/api": "^10.0.0",
+    "@polkadot/util": "^12.0.0"
   }
 }
