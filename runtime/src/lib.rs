@@ -177,10 +177,6 @@ pub type Executive = frame_executive::Executive<
 	AllPalletsWithSystem,
 >;
 
-impl pallet_depin_desci::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-}
-
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -224,6 +220,6 @@ mod runtime {
 	#[runtime::pallet_index(7)]
 	pub type Template = pallet_template;
 
-    #[runtime::pallet_index(8)]
-    pub type DepinDesci = pallet_depin_desci;
+	#[runtime::pallet_index(8)]
+	pub type DepinDesci = pallet_depin_desci;
 }

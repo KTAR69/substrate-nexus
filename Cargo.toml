@@ -102,7 +102,10 @@ pallet-grandpa = { version = "45.0.0", default-features = false }
 pallet-sudo = { version = "45.0.0", default-features = false }
 pallet-timestamp = { version = "44.0.0", default-features = false }
 pallet-transaction-payment-rpc-runtime-api = { version = "45.0.0", default-features = false }
+pallet-session = { version = "45.0.0", default-features = false }
+pallet-staking = { version = "45.0.0", default-features = false }
 scale-info = { version = "2.11.6", default-features = false }
+serde = { version = "1.0.210", default-features = false }
 serde_json = { version = "1.0.132", default-features = false }
 sp-consensus-grandpa = { version = "27.0.0", default-features = false }
 sp-offchain = { version = "40.0.0", default-features = false }
