@@ -135,7 +135,7 @@ pub mod pallet {
             temp: i32,
             humidity: u8,
             pressure: u32,
-            signature: Vec<u8>,
+            signature: BoundedVec<u8, ConstU32<65>>,
             timestamp: u64,
         ) -> DispatchResult {
 			let who = ensure_signed(origin)?;
@@ -143,11 +143,9 @@ pub mod pallet {
             let geo = GeospatialData { lat, long, alt };
             let atm = AtmosphericData { temp, humidity, pressure };
 
-            let bounded_sig: BoundedVec<u8, ConstU32<65>> = signature.try_into().map_err(|_| Error::<T>::NoneValue)?; // Using NoneValue as generic error for now
-
             let trust = TrustHeader {
                 source: who.clone(),
-                signature: bounded_sig,
+                signature,
                 timestamp,
             };
 

@@ -20,6 +20,7 @@ frame-system.workspace = true
 scale-info = { features = ["derive"], workspace = true }
 serde = { features = ["derive"], workspace = true }
 sp-std = { default-features = false, version = "14.0.0" }
+sp-runtime = { default-features = false, workspace = true }
 
 [dev-dependencies]
 sp-core = { default-features = true, workspace = true }
@@ -35,6 +36,7 @@ std = [
 	"scale-info/std",
     "serde/std",
     "sp-std/std",
+    "sp-runtime/std",
 ]
 
 try-runtime = [

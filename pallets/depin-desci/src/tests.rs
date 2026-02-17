@@ -14,16 +14,16 @@ fn submit_sensory_data_works() {
 		let humidity = 60;
 		let pressure = 101325;
 		let signature = vec![1, 2, 3];
+        let bounded_sig: BoundedVec<u8, frame_support::traits::ConstU32<65>> = signature.try_into().unwrap();
 		let timestamp = 123456789;
 
-		assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, signature.clone(), timestamp));
+		assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp));
 
 		let readings = SensoryReadings::<Test>::get(1);
 		assert_eq!(readings.len(), 1);
 		assert_eq!(readings[0].0, GeospatialData { lat, long, alt });
 		assert_eq!(readings[0].1, AtmosphericData { temp, humidity, pressure });
 
-        let bounded_sig: BoundedVec<u8, frame_support::traits::ConstU32<65>> = signature.try_into().unwrap();
 		assert_eq!(readings[0].2, TrustHeader { source: 1, signature: bounded_sig, timestamp });
 
 		System::assert_last_event(Event::SensoryDataSubmitted { who: 1 }.into());
