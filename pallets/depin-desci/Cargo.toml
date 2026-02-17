@@ -24,7 +24,7 @@ sp-std = { default-features = false, version = "14.0.0" }
 [dev-dependencies]
 sp-core = { default-features = true, workspace = true }
 sp-io = { default-features = true, workspace = true }
-sp-runtime = { default-features = true, workspace = true }
+sp-runtime = { default-features = false, workspace = true }
 
 [features]
 default = ["std"]
