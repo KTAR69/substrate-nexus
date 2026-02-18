@@ -1,0 +1,1 @@
+Resuming: 1. root (to check node) 2. cat jules_watch.log (to check Jules)

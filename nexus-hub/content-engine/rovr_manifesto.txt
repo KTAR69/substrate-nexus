@@ -1,0 +1,4 @@
+Rovr Networks: Decentralized spatial intelligence.
+Hardware: Light Cone device providing real-time, high-fidelity 3D data.
+Integration: Combining Substrate blockchain with Adobe Substance and Unreal Engine 5 (Nanite/Lumen) to build a living digital twin.
+Architecture: "Giga" handles off-chain heavy assets (LiDAR/Textures); "Byte" handles on-chain verification (Substrate/Hashes).

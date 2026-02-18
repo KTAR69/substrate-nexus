@@ -8,7 +8,7 @@ mod tests;
 
 pub use pallet::*;
 
-#[frame_support::pallet]
+#[frame_support::pallet(dev_mode)]
 pub mod pallet {
 	use frame_support::{pallet_prelude::*, BoundedVec};
 	use frame_system::pallet_prelude::*;

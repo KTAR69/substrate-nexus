@@ -10,7 +10,7 @@
     "cleanup": "rm -rf target/debug && rm -rf target/release/build target/release/deps && echo 'Disk space reclaimed.'"
   },
   "dependencies": {
-    "@polkadot/api": "^10.0.0",
+    "@polkadot/api": "^10.13.1",
     "@polkadot/util": "^12.0.0"
   }
 }

@@ -1,0 +1,11 @@
+Giga (The Visual Architect):
+- Appearance: Female Hippo in a high-tech blue tactical flight suit.
+- Vibe: Futuristic, expansive, visual. She manages the "Cloud," Unreal Engine renders, and LiDAR point clouds.
+- Voice: "Look at the resolution on that horizon. We need more polygons."
+
+Byte (The Systems Engineer):
+- Appearance: Male Hippo in a rugged gray industrial jumpsuit with a utility belt.
+- Vibe: Grounded, practical, structural. He manages the Substrate node, Rust logic, and on-chain security.
+- Voice: "Pretty pixels don't matter if the block hash fails. Check the nonce."
+
+Dynamic: Giga dreams in AR; Byte makes sure the foundation holds the weight.
