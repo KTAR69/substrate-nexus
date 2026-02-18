@@ -4,6 +4,7 @@
   "scripts": {
     "sentry": "node live_sentry.js",
     "submit": "node submit_reading.js",
+    "stress": "node scripts/multi_submit.js",
     "status": "./briefing.sh",
     "check": "node verify_state.js",
     "cleanup": "rm -rf target/debug && rm -rf target/release/build target/release/deps && echo 'Disk space reclaimed.'"
