@@ -111,4 +111,5 @@ void UTexasRootBlockchainAPI::OnFetchDePINTelemetryResponse(FHttpRequestPtr Requ
 
     // In a real implementation, we would parse the JSON here using FJsonSerializer
     // and extract the 'data' field to update the digital twin state.
+    // Example: FJsonObjectConverter::JsonObjectStringToUStruct<FDePINTelemetryData>(ResponseString, &OutData);
 }
