@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TexasRootBlockchainAPI.h"
+#include "TexasRootSettings.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Serialization/JsonSerializer.h"
@@ -14,9 +15,9 @@ UTexasRootBlockchainAPI::UTexasRootBlockchainAPI()
 
 void UTexasRootBlockchainAPI::FetchPolymarketData(FString ContractAddress, FString MethodData)
 {
-    // Polygon Mainnet RPC Endpoint (Example public endpoint)
-    // In production, this should be configurable via Project Settings or a data table.
-    FString Endpoint = TEXT("https://polygon-rpc.com");
+    // Retrieve the Polygon RPC endpoint from project settings
+    const UTexasRootSettings* Settings = GetDefault<UTexasRootSettings>();
+    FString Endpoint = Settings->PolygonRpcEndpoint;
 
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
     Request->SetURL(Endpoint);
@@ -62,8 +63,9 @@ void UTexasRootBlockchainAPI::OnFetchPolymarketResponse(FHttpRequestPtr Request,
 
 void UTexasRootBlockchainAPI::FetchDePINTelemetry(FString AccountPubKey)
 {
-    // Solana Mainnet Beta RPC Endpoint (Example public endpoint)
-    FString Endpoint = TEXT("https://api.mainnet-beta.solana.com");
+    // Retrieve the Solana RPC endpoint from project settings
+    const UTexasRootSettings* Settings = GetDefault<UTexasRootSettings>();
+    FString Endpoint = Settings->SolanaRpcEndpoint;
 
     TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
     Request->SetURL(Endpoint);
