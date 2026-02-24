@@ -11,7 +11,7 @@
  * UTexasRootBlockchainAPI
  * Module to handle read-only data pulls from Polygon (EVM) and Solana (SVM).
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class NEXUSHUB_TEXASROOT_API UTexasRootBlockchainAPI : public UObject
 {
     GENERATED_BODY()
