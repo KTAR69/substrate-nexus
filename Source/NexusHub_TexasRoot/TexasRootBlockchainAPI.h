@@ -7,6 +7,9 @@
 #include "Interfaces/IHttpRequest.h"
 #include "TexasRootBlockchainAPI.generated.h"
 
+// Delegate for blockchain data responses
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnBlockchainDataReceived, bool, bWasSuccessful, FString, ResponseData);
+
 /**
  * UTexasRootBlockchainAPI
  * Module to handle read-only data pulls from Polygon (EVM) and Solana (SVM).
@@ -36,6 +39,14 @@ public:
      */
     UFUNCTION(BlueprintCallable, Category = "Blockchain|Solana")
     void FetchDePINTelemetry(FString AccountPubKey);
+
+    /** Called when Polygon (Polymarket) data is received */
+    UPROPERTY(BlueprintAssignable, Category = "Blockchain|Polygon")
+    FOnBlockchainDataReceived OnPolymarketDataReceived;
+
+    /** Called when Solana (DePIN) telemetry is received */
+    UPROPERTY(BlueprintAssignable, Category = "Blockchain|Solana")
+    FOnBlockchainDataReceived OnDePINTelemetryReceived;
 
 private:
     // Delegate to handle Polygon responses

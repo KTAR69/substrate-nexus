@@ -51,11 +51,15 @@ void UTexasRootBlockchainAPI::OnFetchPolymarketResponse(FHttpRequestPtr Request,
     if (!bWasSuccessful || !Response.IsValid())
     {
         UE_LOG(LogTexasRootBlockchain, Error, TEXT("Polygon Request Failed."));
+        OnPolymarketDataReceived.Broadcast(false, FString());
         return;
     }
 
     FString ResponseString = Response->GetContentAsString();
     UE_LOG(LogTexasRootBlockchain, Log, TEXT("Polygon Response: %s"), *ResponseString);
+
+    // Broadcast the response to Blueprints
+    OnPolymarketDataReceived.Broadcast(true, ResponseString);
 
     // In a real implementation, we would parse the JSON here using FJsonSerializer
     // and extract the return data (result) from the hex string.
@@ -105,11 +109,15 @@ void UTexasRootBlockchainAPI::OnFetchDePINTelemetryResponse(FHttpRequestPtr Requ
     if (!bWasSuccessful || !Response.IsValid())
     {
         UE_LOG(LogTexasRootBlockchain, Error, TEXT("Solana Request Failed."));
+        OnDePINTelemetryReceived.Broadcast(false, FString());
         return;
     }
 
     FString ResponseString = Response->GetContentAsString();
     UE_LOG(LogTexasRootBlockchain, Log, TEXT("Solana Response: %s"), *ResponseString);
+
+    // Broadcast the response to Blueprints
+    OnDePINTelemetryReceived.Broadcast(true, ResponseString);
 
     // In a real implementation, we would parse the JSON here using FJsonSerializer
     // and extract the 'data' field to update the digital twin state.
