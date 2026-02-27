@@ -58,3 +58,9 @@ void ATexasRootNodeActor::PollChirpSensor()
     });
     Request->ProcessRequest();
 }
+
+void ATexasRootNodeActor::PushSimple6GNotification(FString Message)
+{
+    // Trigger the simplified Blueprint event that accepts a raw string
+    OnSimple6GNotificationReceived(Message);
+}
