@@ -12,7 +12,6 @@ pub use pallet::*;
 pub mod pallet {
 	use frame_support::{pallet_prelude::*, BoundedVec};
 	use frame_system::pallet_prelude::*;
-	use sp_std::vec::Vec;
 
     // Structs for Sensory Data
     #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
@@ -34,14 +33,6 @@ pub mod pallet {
         pub source: AccountId,
         pub signature: BoundedVec<u8, ConstU32<65>>, // Max signature length (e.g. 64 or 65 bytes)
         pub timestamp: u64,
-    }
-
-    // Unified State Struct for RPC
-    #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo)]
-    pub struct NodeState<AccountId, Hash> {
-        pub sensory_data: Vec<(GeospatialData, AtmosphericData, TrustHeader<AccountId>)>,
-        pub conversational_proofs: Vec<Hash>, // List of vCon hashes owned/submitted by account
-        pub ip_nfts: Vec<Hash>, // List of IP-NFT CIDs owned by account
     }
 
 	#[pallet::pallet]
@@ -193,18 +184,4 @@ pub mod pallet {
         }
 	}
 
-    impl<T: Config> Pallet<T> {
-        // Helper function for Unified RPC Getter logic
-        pub fn get_node_state(who: T::AccountId) -> NodeState<T::AccountId, T::Hash> {
-            let sensory_data = SensoryReadings::<T>::get(&who).into_inner();
-            let conversational_proofs = AccountVCons::<T>::get(&who).into_inner();
-            let ip_nfts = AccountIpNfts::<T>::get(&who).into_inner();
-
-            NodeState {
-                sensory_data,
-                conversational_proofs,
-                ip_nfts,
-            }
-        }
-    }
 }
