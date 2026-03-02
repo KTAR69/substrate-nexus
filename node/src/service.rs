@@ -204,6 +204,13 @@ pub fn new_full<
 		);
 	}
 
+	let gossip_duration = config
+		.chain_spec
+		.properties()
+		.get("gossipDuration")
+		.and_then(|val| val.as_u64())
+		.unwrap_or(333);
+
 	let role = config.role;
 	let force_authoring = config.force_authoring;
 	let backoff_authoring_blocks: Option<()> = None;
@@ -291,8 +298,7 @@ pub fn new_full<
 		let keystore = if role.is_authority() { Some(keystore_container.keystore()) } else { None };
 
 		let grandpa_config = sc_consensus_grandpa::Config {
-			// FIXME #1578 make this available through chainspec
-			gossip_duration: Duration::from_millis(333),
+			gossip_duration: Duration::from_millis(gossip_duration),
 			justification_generation_period: GRANDPA_JUSTIFICATION_PERIOD,
 			name: Some(name),
 			observer_enabled: false,
