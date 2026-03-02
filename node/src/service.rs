@@ -211,6 +211,14 @@ pub fn new_full<
 	let enable_grandpa = !config.disable_grandpa;
 	let prometheus_registry = config.prometheus_registry().cloned();
 
+	let gossip_duration = config
+		.chain_spec
+		.properties()
+		.get("gossip_duration")
+		.and_then(|v| v.as_u64())
+		.map(Duration::from_millis)
+		.unwrap_or_else(|| Duration::from_millis(333));
+
 	let rpc_extensions_builder = {
 		let client = client.clone();
 		let pool = transaction_pool.clone();
@@ -291,8 +299,7 @@ pub fn new_full<
 		let keystore = if role.is_authority() { Some(keystore_container.keystore()) } else { None };
 
 		let grandpa_config = sc_consensus_grandpa::Config {
-			// FIXME #1578 make this available through chainspec
-			gossip_duration: Duration::from_millis(333),
+			gossip_duration,
 			justification_generation_period: GRANDPA_JUSTIFICATION_PERIOD,
 			name: Some(name),
 			observer_enabled: false,
