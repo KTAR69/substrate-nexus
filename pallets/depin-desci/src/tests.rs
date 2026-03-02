@@ -2,6 +2,51 @@ use crate::{mock::*, Error, Event, SensoryReadings, ConversationalProofs, Accoun
 use frame_support::{assert_noop, assert_ok, BoundedVec};
 
 #[test]
+fn get_node_state_works() {
+	new_test_ext().execute_with(|| {
+		System::set_block_number(1);
+        let account = 1;
+
+		// 1. Submit Sensory Data
+		let lat = 100;
+		let long = 200;
+		let alt = 50;
+		let temp = 2500;
+		let humidity = 60;
+		let pressure = 101325;
+		let signature = vec![1, 2, 3];
+        let bounded_sig: BoundedVec<u8, frame_support::traits::ConstU32<65>> = signature.try_into().unwrap();
+		let timestamp = 123456789;
+
+		assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(account), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp));
+
+        // 2. Submit vCon Proof
+        let vcon_hash = frame_system::Pallet::<Test>::parent_hash(); // Just use parent hash as a dummy hash
+        assert_ok!(DepinDesci::submit_vcon_proof(RuntimeOrigin::signed(account), vcon_hash));
+
+        // 3. Attest Research Data
+        // Create a different hash for cid to avoid collision with vcon_hash if needed, though they are in different storages.
+        let cid = Default::default(); // Using default hash
+        assert_ok!(DepinDesci::attest_research_data(RuntimeOrigin::signed(account), cid));
+
+        // 4. Get Node State
+        let node_state = DepinDesci::get_node_state(account);
+
+        // 5. Assertions
+        assert_eq!(node_state.sensory_data.len(), 1);
+        assert_eq!(node_state.sensory_data[0].0, GeospatialData { lat, long, alt });
+        assert_eq!(node_state.sensory_data[0].1, AtmosphericData { temp, humidity, pressure });
+        assert_eq!(node_state.sensory_data[0].2, TrustHeader { source: account, signature: bounded_sig, timestamp });
+
+        assert_eq!(node_state.conversational_proofs.len(), 1);
+        assert_eq!(node_state.conversational_proofs[0], vcon_hash);
+
+        assert_eq!(node_state.ip_nfts.len(), 1);
+        assert_eq!(node_state.ip_nfts[0], cid);
+	});
+}
+
+#[test]
 fn submit_sensory_data_works() {
 	new_test_ext().execute_with(|| {
 		// Go past genesis block so events get deposited
