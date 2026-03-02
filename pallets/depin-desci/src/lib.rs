@@ -54,13 +54,25 @@ pub mod pallet {
 
 	// Storage Items
     #[pallet::storage]
-    #[pallet::getter(fn sensory_readings)]
-    pub type SensoryReadings<T: Config> = StorageMap<
+    #[pallet::getter(fn sensory_readings_count)]
+    pub type SensoryReadingsCount<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<(GeospatialData, AtmosphericData, TrustHeader<T::AccountId>), ConstU32<100>>,
+        u32,
         ValueQuery
+    >;
+
+    #[pallet::storage]
+    #[pallet::getter(fn sensory_readings)]
+    pub type SensoryReadings<T: Config> = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        Identity,
+        u32,
+        (GeospatialData, AtmosphericData, TrustHeader<T::AccountId>),
+        OptionQuery
     >;
 
     #[pallet::storage]
@@ -149,9 +161,11 @@ pub mod pallet {
                 timestamp,
             };
 
-			SensoryReadings::<T>::try_mutate(&who, |readings| {
-                readings.try_push((geo, atm, trust)).map_err(|_| Error::<T>::StorageOverflow)
-            })?;
+			let current_count = SensoryReadingsCount::<T>::get(&who);
+			ensure!(current_count < 100, Error::<T>::StorageOverflow);
+
+			SensoryReadings::<T>::insert(&who, current_count, (geo, atm, trust));
+			SensoryReadingsCount::<T>::insert(&who, current_count + 1);
 
 			Self::deposit_event(Event::SensoryDataSubmitted { who });
 			Ok(())
@@ -196,7 +210,7 @@ pub mod pallet {
     impl<T: Config> Pallet<T> {
         // Helper function for Unified RPC Getter logic
         pub fn get_node_state(who: T::AccountId) -> NodeState<T::AccountId, T::Hash> {
-            let sensory_data = SensoryReadings::<T>::get(&who).into_inner();
+            let sensory_data: Vec<_> = SensoryReadings::<T>::iter_prefix_values(&who).collect();
             let conversational_proofs = AccountVCons::<T>::get(&who).into_inner();
             let ip_nfts = AccountIpNfts::<T>::get(&who).into_inner();
 

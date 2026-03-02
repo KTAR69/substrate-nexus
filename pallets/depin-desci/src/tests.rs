@@ -1,4 +1,4 @@
-use crate::{mock::*, Error, Event, SensoryReadings, ConversationalProofs, AccountVCons, IpNftOwnership, AccountIpNfts, GeospatialData, AtmosphericData, TrustHeader};
+use crate::{mock::*, Error, Event, SensoryReadings, SensoryReadingsCount, ConversationalProofs, AccountVCons, IpNftOwnership, AccountIpNfts, GeospatialData, AtmosphericData, TrustHeader};
 use frame_support::{assert_noop, assert_ok, BoundedVec};
 
 #[test]
@@ -19,12 +19,14 @@ fn submit_sensory_data_works() {
 
 		assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp));
 
-		let readings = SensoryReadings::<Test>::get(1);
-		assert_eq!(readings.len(), 1);
-		assert_eq!(readings[0].0, GeospatialData { lat, long, alt });
-		assert_eq!(readings[0].1, AtmosphericData { temp, humidity, pressure });
+		let count = SensoryReadingsCount::<Test>::get(1);
+		assert_eq!(count, 1);
 
-		assert_eq!(readings[0].2, TrustHeader { source: 1, signature: bounded_sig, timestamp });
+		let reading = SensoryReadings::<Test>::get(1, 0).unwrap();
+		assert_eq!(reading.0, GeospatialData { lat, long, alt });
+		assert_eq!(reading.1, AtmosphericData { temp, humidity, pressure });
+
+		assert_eq!(reading.2, TrustHeader { source: 1, signature: bounded_sig, timestamp });
 
 		System::assert_last_event(Event::SensoryDataSubmitted { who: 1 }.into());
 	});
