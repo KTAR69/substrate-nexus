@@ -31,6 +31,34 @@ fn submit_sensory_data_works() {
 }
 
 #[test]
+fn submit_sensory_data_overflow_fails() {
+	new_test_ext().execute_with(|| {
+		System::set_block_number(1);
+
+		let lat = 100;
+		let long = 200;
+		let alt = 50;
+		let temp = 2500;
+		let humidity = 60;
+		let pressure = 101325;
+		let signature = vec![1, 2, 3];
+		let bounded_sig: BoundedVec<u8, frame_support::traits::ConstU32<65>> = signature.try_into().unwrap();
+		let timestamp = 123456789;
+
+		// Insert 100 readings
+		for _ in 0..100 {
+			assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp));
+		}
+
+		// The 101st reading should fail with StorageOverflow
+		assert_noop!(
+			DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp),
+			Error::<Test>::StorageOverflow
+		);
+	});
+}
+
+#[test]
 fn submit_vcon_proof_works() {
     new_test_ext().execute_with(|| {
         System::set_block_number(1);
