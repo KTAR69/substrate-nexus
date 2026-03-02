@@ -184,3 +184,28 @@ fn attest_duplicate_research_data_fails() {
         );
     });
 }
+
+#[test]
+fn attest_research_data_storage_overflow_fails() {
+    new_test_ext().execute_with(|| {
+        System::set_block_number(1);
+
+        // Fill up to max capacity (100 is ConstU32<100> in the pallet)
+        for i in 0..100 {
+            let mut cid = [0u8; 32];
+            cid[0] = i as u8;
+            let hash = sp_core::H256::from(cid);
+            assert_ok!(DepinDesci::attest_research_data(RuntimeOrigin::signed(1), hash.into()));
+        }
+
+        // Try to add one more to trigger overflow
+        let mut cid_overflow = [0u8; 32];
+        cid_overflow[0] = 101;
+        let hash_overflow = sp_core::H256::from(cid_overflow);
+
+        assert_noop!(
+            DepinDesci::attest_research_data(RuntimeOrigin::signed(1), hash_overflow.into()),
+            Error::<Test>::StorageOverflow
+        );
+    });
+}
