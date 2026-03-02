@@ -97,11 +97,23 @@ pub mod pallet {
     // Index mapping Account -> IP-NFT CIDs for easy retrieval
     #[pallet::storage]
     #[pallet::getter(fn account_ip_nfts)]
-    pub type AccountIpNfts<T: Config> = StorageMap<
+    pub type AccountIpNfts<T: Config> = StorageDoubleMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<T::Hash, ConstU32<100>>,
+        Identity,
+        u32,
+        T::Hash,
+        OptionQuery
+    >;
+
+    #[pallet::storage]
+    #[pallet::getter(fn account_ip_nfts_count)]
+    pub type AccountIpNftsCount<T: Config> = StorageMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        u32,
         ValueQuery
     >;
 
@@ -182,11 +194,12 @@ pub mod pallet {
 
             ensure!(!IpNftOwnership::<T>::contains_key(cid), Error::<T>::IpNftAlreadyExists);
 
-            IpNftOwnership::<T>::insert(cid, &who);
+            let count = AccountIpNftsCount::<T>::get(&who);
+            ensure!(count < 100, Error::<T>::StorageOverflow);
 
-            AccountIpNfts::<T>::try_mutate(&who, |nfts| {
-                nfts.try_push(cid).map_err(|_| Error::<T>::StorageOverflow)
-            })?;
+            IpNftOwnership::<T>::insert(cid, &who);
+            AccountIpNfts::<T>::insert(&who, count, cid);
+            AccountIpNftsCount::<T>::insert(&who, count + 1);
 
             Self::deposit_event(Event::ResearchAttested { who, cid });
             Ok(())
@@ -198,7 +211,7 @@ pub mod pallet {
         pub fn get_node_state(who: T::AccountId) -> NodeState<T::AccountId, T::Hash> {
             let sensory_data = SensoryReadings::<T>::get(&who).into_inner();
             let conversational_proofs = AccountVCons::<T>::get(&who).into_inner();
-            let ip_nfts = AccountIpNfts::<T>::get(&who).into_inner();
+            let ip_nfts: Vec<T::Hash> = AccountIpNfts::<T>::iter_prefix_values(&who).collect();
 
             NodeState {
                 sensory_data,

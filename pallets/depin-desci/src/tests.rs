@@ -1,4 +1,4 @@
-use crate::{mock::*, Error, Event, SensoryReadings, ConversationalProofs, AccountVCons, IpNftOwnership, AccountIpNfts, GeospatialData, AtmosphericData, TrustHeader};
+use crate::{mock::*, Error, Event, SensoryReadings, ConversationalProofs, AccountVCons, IpNftOwnership, AccountIpNfts, AccountIpNftsCount, GeospatialData, AtmosphericData, TrustHeader};
 use frame_support::{assert_noop, assert_ok, BoundedVec};
 
 #[test]
@@ -70,9 +70,9 @@ fn attest_research_data_works() {
         assert_ok!(DepinDesci::attest_research_data(RuntimeOrigin::signed(1), cid));
 
         assert!(IpNftOwnership::<Test>::contains_key(cid));
-        let nfts = AccountIpNfts::<Test>::get(1);
-        assert_eq!(nfts.len(), 1);
-        assert_eq!(nfts[0], cid);
+        let count = AccountIpNftsCount::<Test>::get(1);
+        assert_eq!(count, 1);
+        assert_eq!(AccountIpNfts::<Test>::get(1, 0), Some(cid));
 
         System::assert_last_event(Event::ResearchAttested { who: 1, cid }.into());
     });
