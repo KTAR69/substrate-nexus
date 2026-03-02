@@ -135,6 +135,26 @@ fn submit_duplicate_vcon_proof_fails() {
 }
 
 #[test]
+fn submit_vcon_proof_storage_overflow_fails() {
+    new_test_ext().execute_with(|| {
+        System::set_block_number(1);
+
+        // Insert 100 unique hashes to reach max capacity (ConstU32<100>)
+        for i in 0..100 {
+            let hash = sp_core::H256::from_low_u64_be(i as u64);
+            assert_ok!(DepinDesci::submit_vcon_proof(RuntimeOrigin::signed(1), hash));
+        }
+
+        // The 101st insertion should fail due to storage overflow
+        let overflow_hash = sp_core::H256::from_low_u64_be(100);
+        assert_noop!(
+            DepinDesci::submit_vcon_proof(RuntimeOrigin::signed(1), overflow_hash),
+            Error::<Test>::StorageOverflow
+        );
+    });
+}
+
+#[test]
 fn attest_research_data_works() {
     new_test_ext().execute_with(|| {
         System::set_block_number(1);
