@@ -12,7 +12,6 @@ pub use pallet::*;
 pub mod pallet {
 	use frame_support::{pallet_prelude::*, BoundedVec};
 	use frame_system::pallet_prelude::*;
-	use sp_std::vec::Vec;
 
     // Structs for Sensory Data
     #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
@@ -39,9 +38,9 @@ pub mod pallet {
     // Unified State Struct for RPC
     #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo)]
     pub struct NodeState<AccountId, Hash> {
-        pub sensory_data: Vec<(GeospatialData, AtmosphericData, TrustHeader<AccountId>)>,
-        pub conversational_proofs: Vec<Hash>, // List of vCon hashes owned/submitted by account
-        pub ip_nfts: Vec<Hash>, // List of IP-NFT CIDs owned by account
+        pub sensory_data: sp_std::vec::Vec<(GeospatialData, AtmosphericData, TrustHeader<AccountId>)>,
+        pub conversational_proofs: sp_std::vec::Vec<Hash>, // List of vCon hashes owned/submitted by account
+        pub ip_nfts: sp_std::vec::Vec<Hash>, // List of IP-NFT CIDs owned by account
     }
 
 	#[pallet::pallet]
