@@ -73,15 +73,28 @@ pub mod pallet {
         OptionQuery
     >;
 
-    // Index mapping Account -> vCon Hashes for easy retrieval
+    // Index mapping Account -> count of vCon Hashes
     #[pallet::storage]
-    #[pallet::getter(fn account_vcons)]
-    pub type AccountVCons<T: Config> = StorageMap<
+    #[pallet::getter(fn account_vcons_count)]
+    pub type AccountVConsCount<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<T::Hash, ConstU32<100>>,
+        u32,
         ValueQuery
+    >;
+
+    // Index mapping Account -> vCon Hashes for easy retrieval
+    #[pallet::storage]
+    #[pallet::getter(fn account_vcons)]
+    pub type AccountVCons<T: Config> = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        Identity,
+        u32,
+        T::Hash,
+        OptionQuery
     >;
 
     #[pallet::storage]
@@ -167,9 +180,11 @@ pub mod pallet {
             let block_number = <frame_system::Pallet<T>>::block_number();
             ConversationalProofs::<T>::insert(hash, (&who, block_number));
 
-            AccountVCons::<T>::try_mutate(&who, |vcons| {
-                vcons.try_push(hash).map_err(|_| Error::<T>::StorageOverflow)
-            })?;
+            let count = AccountVConsCount::<T>::get(&who);
+            ensure!(count < 100, Error::<T>::StorageOverflow);
+
+            AccountVCons::<T>::insert(&who, count, hash);
+            AccountVConsCount::<T>::insert(&who, count + 1);
 
             Self::deposit_event(Event::VConProofSubmitted { who, hash });
             Ok(())
@@ -197,7 +212,7 @@ pub mod pallet {
         // Helper function for Unified RPC Getter logic
         pub fn get_node_state(who: T::AccountId) -> NodeState<T::AccountId, T::Hash> {
             let sensory_data = SensoryReadings::<T>::get(&who).into_inner();
-            let conversational_proofs = AccountVCons::<T>::get(&who).into_inner();
+            let conversational_proofs = AccountVCons::<T>::iter_prefix_values(&who).collect::<Vec<_>>();
             let ip_nfts = AccountIpNfts::<T>::get(&who).into_inner();
 
             NodeState {

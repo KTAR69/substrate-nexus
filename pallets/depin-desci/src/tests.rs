@@ -39,7 +39,7 @@ fn submit_vcon_proof_works() {
         assert_ok!(DepinDesci::submit_vcon_proof(RuntimeOrigin::signed(1), hash));
 
         assert!(ConversationalProofs::<Test>::contains_key(hash));
-        let proofs = AccountVCons::<Test>::get(1);
+        let proofs: Vec<_> = AccountVCons::<Test>::iter_prefix_values(1).collect();
         assert_eq!(proofs.len(), 1);
         assert_eq!(proofs[0], hash);
 
