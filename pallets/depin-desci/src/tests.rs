@@ -62,6 +62,24 @@ fn submit_duplicate_vcon_proof_fails() {
 }
 
 #[test]
+fn attest_research_data_storage_overflow() {
+    new_test_ext().execute_with(|| {
+        System::set_block_number(1);
+
+        for i in 0..100 {
+            let cid = sp_core::H256::from_low_u64_be(i as u64);
+            assert_ok!(DepinDesci::attest_research_data(RuntimeOrigin::signed(1), cid));
+        }
+
+        let cid_overflow = sp_core::H256::from_low_u64_be(100 as u64);
+        assert_noop!(
+            DepinDesci::attest_research_data(RuntimeOrigin::signed(1), cid_overflow),
+            Error::<Test>::StorageOverflow
+        );
+    });
+}
+
+#[test]
 fn attest_research_data_works() {
     new_test_ext().execute_with(|| {
         System::set_block_number(1);
