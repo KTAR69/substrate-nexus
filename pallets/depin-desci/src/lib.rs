@@ -12,6 +12,7 @@ pub use pallet::*;
 pub mod pallet {
 	use frame_support::{pallet_prelude::*, BoundedVec};
 	use frame_system::pallet_prelude::*;
+	use sp_std::vec::Vec;
 
     // Structs for Sensory Data
     #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
