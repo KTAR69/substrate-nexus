@@ -10,7 +10,7 @@ echo "-----------------------------------------------"
 
 # 1. Start the Blockchain Node (in background)
 echo "📦 [1/3] Launching Blockchain Node..."
-cargo run --release --bin solochain-template-node -- --dev --tmp --rpc-external --rpc-cors all > node.log 2>&1 &
+cargo run --release --bin solochain-template-node -- --dev --tmp > node.log 2>&1 &
 
 # 2. Start the Frontend (in background)
 echo "💻 [2/3] Launching Dashboard..."

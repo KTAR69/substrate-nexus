@@ -6,4 +6,4 @@ cd frontend && npm install --save-dev @types/react @types/react-dom
 sed -i 's/"scripts": {/"scripts": {\n    "dev": "vite",/' package.json
 # 3. Start everything
 echo "✅ Setup Complete. Launching Node and Dashboard..."
-npm run dev -- --host & cd .. && cargo run --release -- --dev --tmp --rpc-external --rpc-cors all
+npm run dev -- --host & cd .. && cargo run --release -- --dev --tmp
