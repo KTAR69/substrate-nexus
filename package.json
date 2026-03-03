@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@polkadot/api": "^16.5.4"
+  },
+  "scripts": {
+    "preinstall": "node preinstall.js"
   }
 }

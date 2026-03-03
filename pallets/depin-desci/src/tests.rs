@@ -64,12 +64,12 @@ fn submit_sensory_data_works() {
 
 		assert_ok!(DepinDesci::submit_sensory_data(RuntimeOrigin::signed(1), lat, long, alt, temp, humidity, pressure, bounded_sig.clone(), timestamp));
 
-		let readings = SensoryReadings::<Test>::get(1);
-		assert_eq!(readings.len(), 1);
-		assert_eq!(readings[0].0, GeospatialData { lat, long, alt });
-		assert_eq!(readings[0].1, AtmosphericData { temp, humidity, pressure });
-
-		assert_eq!(readings[0].2, TrustHeader { source: 1, signature: bounded_sig, timestamp });
+		let count = crate::SensoryReadingsCount::<Test>::get(1);
+		assert_eq!(count, 1);
+		let reading = SensoryReadings::<Test>::get(1, 0).unwrap();
+		assert_eq!(reading.0, GeospatialData { lat, long, alt });
+		assert_eq!(reading.1, AtmosphericData { temp, humidity, pressure });
+		assert_eq!(reading.2, TrustHeader { source: 1, signature: bounded_sig, timestamp });
 
 		System::assert_last_event(Event::SensoryDataSubmitted { who: 1 }.into());
 	});
@@ -112,9 +112,10 @@ fn submit_vcon_proof_works() {
         assert_ok!(DepinDesci::submit_vcon_proof(RuntimeOrigin::signed(1), hash));
 
         assert!(ConversationalProofs::<Test>::contains_key(hash));
-        let proofs = AccountVCons::<Test>::get(1);
-        assert_eq!(proofs.len(), 1);
-        assert_eq!(proofs[0], hash);
+        let count = crate::AccountVConsCount::<Test>::get(1);
+        assert_eq!(count, 1);
+        let proof = AccountVCons::<Test>::get(1, 0).unwrap();
+        assert_eq!(proof, hash);
 
         System::assert_last_event(Event::VConProofSubmitted { who: 1, hash }.into());
     });
@@ -163,9 +164,10 @@ fn attest_research_data_works() {
         assert_ok!(DepinDesci::attest_research_data(RuntimeOrigin::signed(1), cid));
 
         assert!(IpNftOwnership::<Test>::contains_key(cid));
-        let nfts = AccountIpNfts::<Test>::get(1);
-        assert_eq!(nfts.len(), 1);
-        assert_eq!(nfts[0], cid);
+        let count = crate::AccountIpNftsCount::<Test>::get(1);
+        assert_eq!(count, 1);
+        let nft = AccountIpNfts::<Test>::get(1, 0).unwrap();
+        assert_eq!(nft, cid);
 
         System::assert_last_event(Event::ResearchAttested { who: 1, cid }.into());
     });

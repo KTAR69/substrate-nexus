@@ -12,6 +12,7 @@ pub use pallet::*;
 pub mod pallet {
 	use frame_support::{pallet_prelude::*, BoundedVec};
 	use frame_system::pallet_prelude::*;
+	use sp_std::vec::Vec;
 
     // Structs for Sensory Data
     #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
@@ -35,6 +36,14 @@ pub mod pallet {
         pub timestamp: u64,
     }
 
+
+    #[derive(Encode, Decode, Clone, PartialEq, Eq, RuntimeDebug, TypeInfo)]
+    pub struct NodeState<T: Config> {
+        pub sensory_data: Vec<(GeospatialData, AtmosphericData, TrustHeader<T::AccountId>)>,
+        pub conversational_proofs: Vec<T::Hash>,
+        pub ip_nfts: Vec<T::Hash>,
+    }
+
 	#[pallet::pallet]
 	pub struct Pallet<T>(_);
 
@@ -45,13 +54,25 @@ pub mod pallet {
 
 	// Storage Items
     #[pallet::storage]
-    #[pallet::getter(fn sensory_readings)]
-    pub type SensoryReadings<T: Config> = StorageMap<
+    #[pallet::getter(fn sensory_readings_count)]
+    pub type SensoryReadingsCount<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<(GeospatialData, AtmosphericData, TrustHeader<T::AccountId>), ConstU32<100>>,
+        u32,
         ValueQuery
+    >;
+
+    #[pallet::storage]
+    #[pallet::getter(fn sensory_readings)]
+    pub type SensoryReadings<T: Config> = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        Identity,
+        u32,
+        (GeospatialData, AtmosphericData, TrustHeader<T::AccountId>),
+        OptionQuery
     >;
 
     #[pallet::storage]
@@ -66,13 +87,25 @@ pub mod pallet {
 
     // Index mapping Account -> vCon Hashes for easy retrieval
     #[pallet::storage]
-    #[pallet::getter(fn account_vcons)]
-    pub type AccountVCons<T: Config> = StorageMap<
+    #[pallet::getter(fn account_vcons_count)]
+    pub type AccountVConsCount<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<T::Hash, ConstU32<100>>,
+        u32,
         ValueQuery
+    >;
+
+    #[pallet::storage]
+    #[pallet::getter(fn account_vcons)]
+    pub type AccountVCons<T: Config> = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        Identity,
+        u32,
+        T::Hash,
+        OptionQuery
     >;
 
     #[pallet::storage]
@@ -87,15 +120,42 @@ pub mod pallet {
 
     // Index mapping Account -> IP-NFT CIDs for easy retrieval
     #[pallet::storage]
-    #[pallet::getter(fn account_ip_nfts)]
-    pub type AccountIpNfts<T: Config> = StorageMap<
+    #[pallet::getter(fn account_ip_nfts_count)]
+    pub type AccountIpNftsCount<T: Config> = StorageMap<
         _,
         Blake2_128Concat,
         T::AccountId,
-        BoundedVec<T::Hash, ConstU32<100>>,
+        u32,
         ValueQuery
     >;
 
+    #[pallet::storage]
+    #[pallet::getter(fn account_ip_nfts)]
+    pub type AccountIpNfts<T: Config> = StorageDoubleMap<
+        _,
+        Blake2_128Concat,
+        T::AccountId,
+        Identity,
+        u32,
+        T::Hash,
+        OptionQuery
+    >;
+
+
+
+	impl<T: Config> Pallet<T> {
+		pub fn get_node_state(account: T::AccountId) -> NodeState<T> {
+			let sensory_data: Vec<_> = SensoryReadings::<T>::iter_prefix_values(account.clone()).collect();
+			let conversational_proofs: Vec<_> = AccountVCons::<T>::iter_prefix_values(account.clone()).collect();
+			let ip_nfts: Vec<_> = AccountIpNfts::<T>::iter_prefix_values(account).collect();
+
+			NodeState {
+				sensory_data,
+				conversational_proofs,
+				ip_nfts,
+			}
+		}
+	}
 
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -117,7 +177,7 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 
         #[pallet::call_index(0)]
-		#[pallet::weight(10_000)]
+		#[pallet::weight(Weight::from_parts(10_000, 0))]
 		pub fn submit_sensory_data(
             origin: OriginFor<T>,
             lat: i32,
@@ -140,8 +200,11 @@ pub mod pallet {
                 timestamp,
             };
 
-			SensoryReadings::<T>::try_mutate(&who, |readings| {
-                readings.try_push((geo, atm, trust)).map_err(|_| Error::<T>::StorageOverflow)
+			SensoryReadingsCount::<T>::try_mutate(&who, |count| -> Result<(), Error<T>> {
+                ensure!(*count < 100, Error::<T>::StorageOverflow);
+                SensoryReadings::<T>::insert(&who, *count, (geo, atm, trust));
+                *count += 1;
+                Ok(())
             })?;
 
 			Self::deposit_event(Event::SensoryDataSubmitted { who });
@@ -149,7 +212,7 @@ pub mod pallet {
 		}
 
         #[pallet::call_index(1)]
-        #[pallet::weight(10_000)]
+        #[pallet::weight(Weight::from_parts(10_000, 0))]
         pub fn submit_vcon_proof(origin: OriginFor<T>, hash: T::Hash) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
@@ -158,8 +221,11 @@ pub mod pallet {
             let block_number = <frame_system::Pallet<T>>::block_number();
             ConversationalProofs::<T>::insert(hash, (&who, block_number));
 
-            AccountVCons::<T>::try_mutate(&who, |vcons| {
-                vcons.try_push(hash).map_err(|_| Error::<T>::StorageOverflow)
+            AccountVConsCount::<T>::try_mutate(&who, |count| -> Result<(), Error<T>> {
+                ensure!(*count < 100, Error::<T>::StorageOverflow);
+                AccountVCons::<T>::insert(&who, *count, hash);
+                *count += 1;
+                Ok(())
             })?;
 
             Self::deposit_event(Event::VConProofSubmitted { who, hash });
@@ -167,7 +233,7 @@ pub mod pallet {
         }
 
         #[pallet::call_index(2)]
-        #[pallet::weight(10_000)]
+        #[pallet::weight(Weight::from_parts(10_000, 0))]
         pub fn attest_research_data(origin: OriginFor<T>, cid: T::Hash) -> DispatchResult {
             let who = ensure_signed(origin)?;
 
@@ -175,8 +241,11 @@ pub mod pallet {
 
             IpNftOwnership::<T>::insert(cid, &who);
 
-            AccountIpNfts::<T>::try_mutate(&who, |nfts| {
-                nfts.try_push(cid).map_err(|_| Error::<T>::StorageOverflow)
+            AccountIpNftsCount::<T>::try_mutate(&who, |count| -> Result<(), Error<T>> {
+                ensure!(*count < 100, Error::<T>::StorageOverflow);
+                AccountIpNfts::<T>::insert(&who, *count, cid);
+                *count += 1;
+                Ok(())
             })?;
 
             Self::deposit_event(Event::ResearchAttested { who, cid });
