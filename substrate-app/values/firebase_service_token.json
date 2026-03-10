@@ -1,0 +1,5 @@
+{
+    "name": "firebase_service_token",
+    "value": "placeholder_service_token",
+    "from_secret": false
+}

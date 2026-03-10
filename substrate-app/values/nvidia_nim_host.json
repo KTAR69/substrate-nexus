@@ -1,0 +1,5 @@
+{
+    "name": "nvidia_nim_host",
+    "value": "https://nim.placeholder.host",
+    "from_secret": false
+}

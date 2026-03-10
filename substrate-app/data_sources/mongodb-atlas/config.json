@@ -1,0 +1,10 @@
+{
+    "config": {
+        "clusterName": "Texas-Root-Alpha",
+        "readPreference": "primary",
+        "wireProtocolEnabled": false
+    },
+    "name": "mongodb-atlas",
+    "type": "mongodb-atlas",
+    "version": 1
+}
