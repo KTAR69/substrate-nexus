@@ -1,1 +1,15 @@
+[
+    {
+        "name": "vcon_firebase_projector",
+        "private": true
+    },
+    {
+        "name": "vcon_nim_embedder",
+        "private": true
+    },
+    {
+        "name": "byte_nim_query",
+        "private": false
+    }
+]
 []

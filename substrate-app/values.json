@@ -1,0 +1,17 @@
+[
+    {
+        "name": "firebase_project_id",
+        "value": "placeholder_project_id",
+        "from_secret": false
+    },
+    {
+        "name": "firebase_service_token",
+        "value": "placeholder_service_token",
+        "from_secret": false
+    },
+    {
+        "name": "nvidia_nim_host",
+        "value": "https://nim.placeholder.host",
+        "from_secret": false
+    }
+]
