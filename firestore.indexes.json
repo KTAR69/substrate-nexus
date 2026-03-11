@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "event_stream",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "timestamp", "order": "DESCENDING" },
+        { "fieldPath": "ttl_epoch_ms", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
