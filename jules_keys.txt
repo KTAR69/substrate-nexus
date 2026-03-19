@@ -1,0 +1,5 @@
+--- UE5 Integration Strings ---
+Local Agent DID: did:key:5Hfue393aqgufkKK2mM3YqKFTpZsKtTWMgFZ7uicbQFnCouV
+WebSocket Endpoint: ws://127.0.0.1:9944
+
+Command Readiness: Sync Complete. The brain is initialized and ready to receive and sign 'Come', 'Follow', and 'GetIn' commands on the local DID. Authorization for Stitch and Render modules is confirmed active.
