@@ -1,0 +1,21 @@
+{
+  "project": "NexusHub_TexasRoot",
+  "asset_hash": "0xabe90bda18c062edaf7e999bcc69eeab908d02edf1bd3dcbc34b3f74e9b8ed24",
+  "coordinates": [
+    {
+      "lat": "294,241",
+      "long": "-984,936",
+      "alt": "198"
+    },
+    {
+      "temp": "22",
+      "humidity": "45",
+      "pressure": "101,325"
+    },
+    {
+      "source": "5H8U1BStiU22zLtL7jKCVdDAka5HqiAWmVeidLuwyU37K1h2",
+      "signature": "0xe4486d6839c8ad02e1780b45c2e0345ef65e1fbcac393bb02077a54df7e2d1fe",
+      "timestamp": "1,771,435,503,784"
+    }
+  ]
+}
