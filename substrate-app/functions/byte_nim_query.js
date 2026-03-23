@@ -1,4 +1,7 @@
 exports = async function({ currentEventText, governanceEpoch, topK = 5 }) {
+  // NOTE: This function runs in MongoDB Atlas App Services, not Firebase Functions.
+  // The global 'context' object is provided by Atlas and 'context.values.get()'
+  // is the correct mechanism for retrieving configured environment values.
   const nimHost = context.values.get("nvidia_nim_host");
   const collection = context.services
     .get("mongodb-atlas")
