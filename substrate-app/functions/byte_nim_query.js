@@ -29,7 +29,7 @@ exports = async function({ currentEventText, governanceEpoch, topK = 5 }) {
       index: "vector_index", // Using the correct index name we created earlier
       path: "embedding.vector", // Wait, earlier I created 'vectors'. Let me check.
       queryVector: queryVector,
-      numCandidates: Math.max(topK * 10, 100),
+      numCandidates: context.values.get("vector_search_limit") ? Math.max(topK * 10, parseInt(context.values.get("vector_search_limit"), 10)) : Math.max(topK * 10, 100),
       limit: topK
     }
   };
@@ -66,10 +66,11 @@ exports = async function({ currentEventText, governanceEpoch, topK = 5 }) {
   const memoryContext = similarVcons.map((v, i) => {
     const outcome = v.analysis?.[0]?.body ?? {};
     const sub = v.substrate_context ?? {};
+    const dialogTexts = (v.dialog ?? []).map(d => typeof d.body === 'string' ? d.body : JSON.stringify(d.body ?? {}));
     return [
       `[Memory ${i + 1} | Similarity: ${(v.score ?? 0).toFixed(4)}]`,
       `Event: ${v.subject}`,
-      `Dialog: ${JSON.stringify(v.dialog?.map(d => d.body) ?? [])}`,
+      `Dialog: ${dialogTexts.join(" | ")}`,
       `Outcome: efficacy=${outcome.efficacy_score ?? "N/A"}, tags=${(outcome.pattern_tags ?? []).join(",")}`,
       `Substrate: epoch=${sub.dao_governance_epoch}, load=${sub.network_load_pct}, defi=${sub.defi_metabolic_index}`
     ].join("\n");

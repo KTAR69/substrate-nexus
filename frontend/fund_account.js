@@ -5,17 +5,22 @@ async function main () {
   const api = await ApiPromise.create({ provider });
   const keyring = new Keyring({ type: 'sr25519' });
 
-  const sudoKey = process.env.SUDO_KEY;
+  const sudoKey = process.env.SUDO_KEY || process.env.SUDO_KEY_URI;
   if (!sudoKey) {
-    console.error("❌ ERROR: SUDO_KEY environment variable is not set.");
+    console.error("❌ ERROR: SUDO_KEY or SUDO_KEY_URI environment variable is not set.");
     console.error("   Please run with: SUDO_KEY='suri or hex' node fund_account.js");
     process.exit(1);
   }
 
   const sudoAccount = keyring.addFromUri(sudoKey);
 
-  // We are using the default Alice address as the recipient for now
-  const RECIPIENT = '5GrwvaEFW6thm1CcNpSycA7qW9mSNo1qK9dSLP28u2mU2E'; 
+  const RECIPIENT = process.env.RECIPIENT || process.argv[2];
+  if (!RECIPIENT) {
+    console.error("❌ ERROR: RECIPIENT environment variable or command-line argument is not set.");
+    console.error("   Please run with: RECIPIENT='address' node fund_account.js");
+    process.exit(1);
+  }
+
   const AMOUNT = '100000000000000'; // 100 UNIT
 
   console.log(`🚀 Funding ${RECIPIENT} from Sudo Account...`);
