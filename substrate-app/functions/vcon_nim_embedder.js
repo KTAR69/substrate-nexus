@@ -7,9 +7,18 @@ exports = async function(changeEvent) {
     .db("substrate_network")
     .collection("vcons");
 
+  async function handleNimFailure(errorMessage) {
+    console.error(`[vcon_nim_embedder] ${errorMessage}`);
+    await collection.updateOne(
+      { _id: vcon._id },
+      { $set: { "nim_context.embedding_status": "failed" } }
+    );
+    return { success: false, error: errorMessage };
+  }
+
   // Build the text corpus to embed
   const dialogText = (vcon.dialog ?? [])
-    .map(d => JSON.stringify(d.body ?? {}))
+    .map(d => typeof d.body === 'string' ? d.body : JSON.stringify(d.body ?? {}))
     .join(" ");
   const tagText = (vcon.analysis ?? [])
     .flatMap(a => a.body?.pattern_tags ?? [])
@@ -35,22 +44,12 @@ exports = async function(changeEvent) {
       })
     });
   } catch (err) {
-    console.error(`[vcon_nim_embedder] NIM call failed for ${vcon.uuid}: ${err.message}`);
-    await collection.updateOne(
-      { _id: vcon._id },
-      { $set: { "nim_context.embedding_status": "failed" } }
-    );
-    return { success: false, error: err.message };
+    return await handleNimFailure(`NIM call failed for ${vcon.uuid}: ${err.message}`);
   }
 
   const responseBody = EJSON.parse(embeddingResponse.body.text());
   if (!responseBody.data || !responseBody.data[0] || !responseBody.data[0].embedding) {
-    console.error(`[vcon_nim_embedder] Unexpected NIM response structure for ${vcon.uuid}`);
-    await collection.updateOne(
-      { _id: vcon._id },
-      { $set: { "nim_context.embedding_status": "failed" } }
-    );
-    return { success: false, error: "Malformed NIM response" };
+    return await handleNimFailure(`Unexpected NIM response structure for ${vcon.uuid}`);
   }
 
   const vector = responseBody.data[0].embedding;

@@ -211,3 +211,19 @@ fn attest_research_data_storage_overflow_fails() {
         );
     });
 }
+
+#[test]
+fn get_node_state_empty_works() {
+	new_test_ext().execute_with(|| {
+		System::set_block_number(1);
+        let account = 1;
+
+        // Get Node State for unused account
+        let node_state = DepinDesci::get_node_state(account);
+
+        // Assertions for empty state
+        assert_eq!(node_state.sensory_data.len(), 0);
+        assert_eq!(node_state.conversational_proofs.len(), 0);
+        assert_eq!(node_state.ip_nfts.len(), 0);
+	});
+}
