@@ -1,0 +1,161 @@
+﻿cargo : warning: patch 
+`simple-mermaid v0.1.0 (C:\
+Users\owlta\.gemini\antigra
+vity\playground\velvet-cosm
+ic\mermaid_fix)` was not 
+used in the crate graph
+At line:1 char:1
++ cargo check -p 
+pallet-consulting -p 
+pallet-template --tests 
+2>&1 | Ou ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (war  
+  ning: patch ...the cra   
+ te graph:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+  |
+  = help: perhaps you 
+meant one of the following:
+          	crates-io
+warning: patch `ring 
+v0.1.0 (https://github.com/
+clearloop/ring-proof#51c5ad
+35)` was not used in the 
+crate graph
+  |
+  = help: perhaps you 
+meant one of the following:
+          	crates-io
+warning: patch `fflonk 
+v0.1.1 (https://github.com/
+clearloop/fflonk#1c97672e)`
+ was not used in the crate 
+graph
+warning: patch 
+`derive_more v0.99.17 (http
+s://github.com/JelteF/deriv
+e_more?tag=v0.99.17#718fbb6
+7)` was not used in the 
+crate graph
+warning: patch 
+`sp-api-proc-macro v15.0.0 
+(https://github.com/parityt
+ech/polkadot-sdk?tag=polkad
+ot-v1.7.0#2fe3145a)` was 
+not used in the crate graph
+help: Check that the 
+patched package version 
+and available features are 
+compatible
+      with the dependency 
+requirements. If the patch 
+has a different version 
+from
+      what is locked in 
+the Cargo.lock file, run 
+`cargo update` to use the 
+new
+      version. This may 
+also occur with an 
+optional dependency that 
+is not enabled.
+    Checking sp-core 
+v36.1.0
+    Checking sp-trie 
+v39.1.0
+    Checking sp-keystore 
+v0.42.0
+    Checking 
+sp-state-machine v0.45.0
+    Checking sp-io v40.0.1
+    Checking 
+sp-application-crypto 
+v40.1.0
+    Checking sp-runtime 
+v41.1.0
+    Checking sp-version 
+v39.0.0
+    Checking sp-inherents 
+v36.0.0
+    Checking sp-staking 
+v38.0.0
+    Checking sp-api v36.0.1
+    Checking 
+sp-genesis-builder v0.17.0
+    Checking frame-support 
+v40.1.0
+    Checking frame-system 
+v40.1.0
+    Checking 
+pallet-balances v41.1.0
+    Checking 
+pallet-template v0.1.0 (C:\
+Users\owlta\.gemini\antigra
+vity\playground\velvet-cosm
+ic\pallets\template)
+error[E0046]: not all 
+trait items implemented, 
+missing: 
+`ExtensionsWeightInfo`, 
+`SingleBlockMigrations`, 
+`MultiBlockMigrator`, 
+`PreInherents`, 
+`PostInherents`, 
+`PostTransactions`
+  --> pallets\template\src\
+mock.rs:13:1
+   |
+13 | impl 
+frame_system::Config for 
+Test {
+   | ^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^ missing 
+`ExtensionsWeightInfo`, 
+`SingleBlockMigrations`, 
+`MultiBlockMigrator`, 
+`PreInherents`, 
+`PostInherents`, 
+`PostTransactions` in 
+implementation
+   |
+   = help: implement the 
+missing item: `type 
+ExtensionsWeightInfo = /* 
+Type */;`
+   = help: implement the 
+missing item: `type 
+SingleBlockMigrations = /* 
+Type */;`
+   = help: implement the 
+missing item: `type 
+MultiBlockMigrator = /* 
+Type */;`
+   = help: implement the 
+missing item: `type 
+PreInherents = /* Type */;`
+   = help: implement the 
+missing item: `type 
+PostInherents = /* Type 
+*/;`
+   = help: implement the 
+missing item: `type 
+PostTransactions = /* Type 
+*/;`
+
+For more information about 
+this error, try `rustc 
+--explain E0046`.
+error: could not compile 
+`pallet-template` (lib 
+test) due to 1 previous 
+error
+warning: build failed, 
+waiting for other jobs to 
+finish...

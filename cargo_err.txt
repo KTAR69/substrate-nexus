@@ -1,0 +1,108 @@
+﻿cargo :     Updating 
+git repository `https
+://github.com/clearlo
+op/ring-proof`
+At line:1 char:1
++ cargo update 2>&1 
+| Out-File -Encoding 
+utf8 cargo_err.txt
++ ~~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (    Upd   
+ ating gi...oop/r    
+ing-proof`:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+    Updating git 
+repository `https://g
+ithub.com/JelteF/deri
+ve_more`
+    Updating git 
+repository `https://g
+ithub.com/bytecodeall
+iance/rustix`
+    Updating git 
+repository `https://g
+ithub.com/clearloop/f
+flonk`
+    Updating 
+crates.io index
+error: failed to 
+select a version for 
+`sp-api-proc-macro`.
+    ... required by 
+package `sp-api 
+v26.0.0`
+    ... which 
+satisfies dependency 
+`sp-api = "^26.0.0"` 
+of package 
+`sc-client-api 
+v28.0.0`
+    ... which 
+satisfies dependency 
+`sc-client-api = 
+"^28.0.0"` of 
+package `solochain-te
+mplate-node v0.1.0 (C
+:\Users\owlta\.gemini
+\antigravity\playgrou
+nd\velvet-cosmic\node
+)`
+versions that meet 
+the requirements 
+`^15.0.0` are: 
+15.0.2, 15.0.1
+
+package `sp-api` 
+depends on 
+`sp-api-proc-macro` 
+with feature 
+`frame-metadata` but 
+`sp-api-proc-macro` 
+does not have that 
+feature.
+
+
+all possible 
+versions conflict 
+with previously 
+selected packages.
+
+  previously 
+selected package 
+`sp-api-proc-macro 
+v15.0.1`
+    ... which 
+satisfies dependency 
+`sp-api-proc-macro = 
+"^15.0.0"` of 
+package `sp-api 
+v26.0.0`
+    ... which 
+satisfies dependency 
+`sp-api = "^26.0.0"` 
+of package 
+`sc-client-api 
+v28.0.0`
+    ... which 
+satisfies dependency 
+`sc-client-api = 
+"^28.0.0"` of 
+package `solochain-te
+mplate-node v0.1.0 (C
+:\Users\owlta\.gemini
+\antigravity\playgrou
+nd\velvet-cosmic\node
+)`
+
+failed to select a 
+version for 
+`sp-api-proc-macro` 
+which could resolve 
+this conflict

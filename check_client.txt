@@ -1,0 +1,1768 @@
+﻿cargo :     Checking 
+sp-state-machine 
+v0.35.0 (https://gith
+ub.com/paritytech/pol
+kadot-sdk?tag=polkado
+t-v1.7.0#2fe3145a)
+At line:1 char:1
++ cargo check -p 
+sc-client-api@28.0.0 
+2>&1 | Out-File 
+-Encoding utf8 ch ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (    Che   
+ cking sp...1.7.0    
+#2fe3145a):Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+    Checking 
+sp-runtime-interface 
+v24.0.0
+    Checking 
+sp-state-machine 
+v0.35.0
+    Checking 
+sc-allocator v23.0.0
+    Checking 
+wasm-instrument 
+v0.3.0
+   Compiling 
+sc-executor-wasmtime 
+v0.29.0
+    Checking 
+sc-utils v14.0.0
+    Checking 
+sc-executor-common 
+v0.29.0
+error[E0053]: method 
+`kill_child_storage` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:212:7
+    |
+212 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut 
+BasicExternalities, 
+&ChildInfo, std::opti
+on::Option<_>, std::o
+ption::Option<&_>) 
+-> sp_externalities::
+MultiRemovalResults`
+               found 
+signature `fn(&mut 
+BasicExternalities, 
+&ChildInfo, std::opti
+on::Option<_>, std::o
+ption::Option<&_>) 
+-> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+212 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0053]: method 
+`clear_prefix` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:222:7
+    |
+222 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut 
+BasicExternalities, 
+&_, std::option::Opti
+on<_>, std::option::O
+ption<&_>) -> sp_exte
+rnalities::MultiRemov
+alResults`
+               found 
+signature `fn(&mut 
+BasicExternalities, 
+&_, std::option::Opti
+on<_>, std::option::O
+ption<&_>) -> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+222 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0053]: method 
+`clear_child_prefix` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:242:7
+    |
+242 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut 
+BasicExternalities, 
+&ChildInfo, &_, std::
+option::Option<_>, st
+d::option::Option<&_>
+) -> sp_externalities
+::MultiRemovalResults
+`
+               found 
+signature `fn(&mut 
+BasicExternalities, 
+&ChildInfo, &_, std::
+option::Option<_>, st
+d::option::Option<&_>
+) -> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+242 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0277]: the 
+trait bound 
+`BasicExternalities: 
+sp_externalities::ext
+ensions::ExtensionSto
+re` is not satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:160:24
+    |
+160 | impl 
+Externalities for 
+BasicExternalities {
+    |                
+        
+^^^^^^^^^^^^^^^^^^ 
+unsatisfied trait 
+bound
+    |
+help: the trait `sp_e
+xternalities::extensi
+ons::ExtensionStore` 
+is not implemented 
+for 
+`BasicExternalities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:41:1
+    |
+ 41 | pub struct 
+BasicExternalities {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\extens
+ions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^ this is 
+the expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\ex
+tensions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ---------------
+--------- this is 
+the found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+note: required by a 
+bound in `sp_core::tr
+aits::Externalities`
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:26
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    |                
+          
+^^^^^^^^^^^^^^ 
+required by this 
+bound in 
+`Externalities`
+    = note: 
+`Externalities` is a 
+"sealed trait", 
+because to implement 
+it you also need to 
+implement `sp_externa
+lities::extensions::E
+xtensionStore`, 
+which is not 
+accessible; this is 
+usually done to 
+force you to use one 
+of the provided 
+types that already 
+implement it
+
+error[E0053]: method 
+`child_storage` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:214:38
+    |
+214 |     fn 
+child_storage(&self, 
+child_info: 
+&ChildInfo, key: 
+&[u8]) -> 
+Option<StorageValue> 
+{
+    |                
+                     
+    ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &sp_storage::Chil
+dInfo, &_) -> std::op
+tion::Option<_>`
+               found 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &ChildInfo, &_) 
+-> std::option::Optio
+n<_>`
+help: change the 
+parameter type to 
+match the trait
+    |
+214 |     fn 
+child_storage(&self, 
+child_info: &sp_stora
+ge::ChildInfo, key: 
+&[u8]) -> 
+Option<StorageValue> 
+{
+    |                
+                     
+     ++++++++++++
+
+error[E0053]: method 
+`child_storage_hash` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:236:43
+    |
+236 |     fn child_st
+orage_hash(&self, 
+child_info: 
+&ChildInfo, key: 
+&[u8]) -> 
+Option<Vec<u8>> {
+    |                
+                     
+         ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &sp_storage::Chil
+dInfo, &_) -> std::op
+tion::Option<_>`
+               found 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &ChildInfo, &_) 
+-> std::option::Optio
+n<_>`
+help: change the 
+parameter type to 
+match the trait
+    |
+236 |     fn child_st
+orage_hash(&self, 
+child_info: &sp_stora
+ge::ChildInfo, key: 
+&[u8]) -> 
+Option<Vec<u8>> {
+    |                
+                     
+          
+++++++++++++
+
+error[E0053]: method 
+`exists_child_storage
+` has an 
+incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:276:45
+    |
+276 |     fn exists_c
+hild_storage(&self, 
+child_info: 
+&ChildInfo, key: 
+&[u8]) -> bool {
+    |                
+                     
+           
+^^^^^^^^^^ expected `
+sp_storage::ChildInfo
+`, found `ChildInfo`
+    |
+    = note: expected 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &sp_storage::Chil
+dInfo, &_) -> _`
+               found 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &ChildInfo, &_) 
+-> _`
+help: change the 
+parameter type to 
+match the trait
+    |
+276 |     fn exists_c
+hild_storage(&self, 
+child_info: &sp_stora
+ge::ChildInfo, key: 
+&[u8]) -> bool {
+    |                
+                     
+            
+++++++++++++
+
+error[E0053]: method 
+`next_child_storage_k
+ey` has an 
+incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:336:47
+    |
+336 |     fn next_chi
+ld_storage_key(&self,
+ child_info: 
+&ChildInfo, key: 
+&[u8]) -> 
+Option<StorageKey> {
+    |                
+                     
+             
+^^^^^^^^^^ expected `
+sp_storage::ChildInfo
+`, found `ChildInfo`
+    |
+    = note: expected 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &sp_storage::Chil
+dInfo, &_) -> std::op
+tion::Option<_>`
+               found 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>, &ChildInfo, &_) 
+-> std::option::Optio
+n<_>`
+help: change the 
+parameter type to 
+match the trait
+    |
+336 |     fn next_chi
+ld_storage_key(&self,
+ child_info: &sp_stor
+age::ChildInfo, key: 
+&[u8]) -> 
+Option<StorageKey> {
+    |                
+                     
+              
+++++++++++++
+
+error[E0053]: method 
+`place_child_storage`
+ has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:404:15
+    |
+404 |         
+child_info: 
+&ChildInfo,
+    |                
+     ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, &
+sp_storage::ChildInfo
+, Vec<_>, std::option
+::Option<_>)`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, 
+&ChildInfo, Vec<_>, s
+td::option::Option<_>
+)`
+help: change the 
+parameter type to 
+match the trait
+    |
+404 |         
+child_info: &sp_stora
+ge::ChildInfo,
+    |                
+      ++++++++++++
+
+error[E0053]: method 
+`kill_child_storage` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:423:15
+    |
+423 |         
+child_info: 
+&ChildInfo,
+    |                
+     ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, &
+sp_storage::ChildInfo
+, std::option::Option
+<_>, std::option::Opt
+ion<&_>) -> 
+MultiRemovalResults`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, 
+&ChildInfo, std::opti
+on::Option<_>, std::o
+ption::Option<&_>) 
+-> 
+MultiRemovalResults`
+help: change the 
+parameter type to 
+match the trait
+    |
+423 |         
+child_info: &sp_stora
+ge::ChildInfo,
+    |                
+      ++++++++++++
+
+error[E0053]: method 
+`clear_child_prefix` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:470:15
+    |
+470 |         
+child_info: 
+&ChildInfo,
+    |                
+     ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, &
+sp_storage::ChildInfo
+, &_, std::option::Op
+tion<_>, std::option:
+:Option<&_>) -> 
+MultiRemovalResults`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, 
+&ChildInfo, &_, std::
+option::Option<_>, st
+d::option::Option<&_>
+) -> 
+MultiRemovalResults`
+help: change the 
+parameter type to 
+match the trait
+    |
+470 |         
+child_info: &sp_stora
+ge::ChildInfo,
+    |                
+      ++++++++++++
+
+error[E0053]: method 
+`storage_root` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:512:44
+    |
+512 |     fn 
+storage_root(&mut 
+self, state_version: 
+StateVersion) -> 
+Vec<u8> {
+    |                
+                     
+          
+^^^^^^^^^^^^ 
+expected `sp_storage:
+:StateVersion`, 
+found `StateVersion`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, s
+p_storage::StateVersi
+on) -> Vec<_>`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, 
+StateVersion) -> 
+Vec<_>`
+help: change the 
+parameter type to 
+match the trait
+    |
+512 |     fn 
+storage_root(&mut 
+self, state_version: 
+sp_storage::StateVers
+ion) -> Vec<u8> {
+    |                
+                     
+          
+++++++++++++
+
+error[E0053]: method 
+`child_storage_root` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:530:15
+    |
+530 |         
+child_info: 
+&ChildInfo,
+    |                
+     ^^^^^^^^^^ 
+expected `sp_storage:
+:ChildInfo`, found 
+`ChildInfo`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, &
+sp_storage::ChildInfo
+, sp_storage::StateVe
+rsion) -> Vec<_>`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, 
+&ChildInfo, 
+StateVersion) -> 
+Vec<_>`
+help: change the 
+parameter type to 
+match the trait
+    |
+530 |         
+child_info: &sp_stora
+ge::ChildInfo,
+    |                
+      ++++++++++++
+
+error[E0053]: method 
+`get_whitelist` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:639:29
+    |
+639 |     fn 
+get_whitelist(&self) 
+-> Vec<TrackedStorage
+Key> {
+    |                
+                ^^^^^
+^^^^^^^^^^^^^^^^^ 
+expected `sp_storage:
+:TrackedStorageKey`, 
+found 
+`TrackedStorageKey`
+    |
+    = note: expected 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>) -> Vec<sp_storage
+::TrackedStorageKey>`
+               found 
+signature 
+`fn(&ext::Ext<'_, _, 
+_>) -> Vec<TrackedSto
+rageKey>`
+help: change the 
+output type to match 
+the trait
+    |
+639 |     fn 
+get_whitelist(&self) 
+-> Vec<sp_storage::Tr
+ackedStorageKey> {
+    |                
+                    
+++++++++++++
+
+error[E0053]: method 
+`set_whitelist` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:643:35
+    |
+643 |     fn 
+set_whitelist(&mut 
+self, new: Vec<Tracke
+dStorageKey>) {
+    |                
+                     
+ ^^^^^^^^^^^^^^^^^^^^
+^^ expected `sp_stora
+ge::TrackedStorageKey
+`, found 
+`TrackedStorageKey`
+    |
+    = note: expected 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, V
+ec<sp_storage::Tracke
+dStorageKey>)`
+               found 
+signature `fn(&mut 
+ext::Ext<'_, _, _>, V
+ec<TrackedStorageKey>
+)`
+help: change the 
+parameter type to 
+match the trait
+    |
+643 |     fn 
+set_whitelist(&mut 
+self, new: Vec<sp_sto
+rage::TrackedStorageK
+ey>) {
+    |                
+                     
+     ++++++++++++
+
+error[E0053]: method 
+`kill_child_storage` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:147:7
+    |
+147 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, 
+&ChildInfo, std::opti
+on::Option<_>, std::o
+ption::Option<&_>) 
+-> sp_externalities::
+MultiRemovalResults`
+               found 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, 
+&ChildInfo, std::opti
+on::Option<_>, std::o
+ption::Option<&_>) 
+-> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+147 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0053]: method 
+`clear_prefix` has 
+an incompatible type 
+for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:156:7
+    |
+156 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, &_, std::op
+tion::Option<_>, std:
+:option::Option<&_>) 
+-> sp_externalities::
+MultiRemovalResults`
+               found 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, &_, std::op
+tion::Option<_>, std:
+:option::Option<&_>) 
+-> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+156 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0053]: method 
+`clear_child_prefix` 
+has an incompatible 
+type for trait
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:166:7
+    |
+166 |     ) -> 
+MultiRemovalResults {
+    |          
+^^^^^^^^^^^^^^^^^^^ 
+expected `sp_external
+ities::MultiRemovalRe
+sults`, found 
+`MultiRemovalResults`
+    |
+    = note: expected 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, 
+&ChildInfo, &_, std::
+option::Option<_>, st
+d::option::Option<&_>
+) -> sp_externalities
+::MultiRemovalResults
+`
+               found 
+signature `fn(&mut Re
+adOnlyExternalities<'
+_, _, _>, 
+&ChildInfo, &_, std::
+option::Option<_>, st
+d::option::Option<&_>
+) -> 
+MultiRemovalResults`
+help: change the 
+output type to match 
+the trait
+    |
+166 |     ) -> sp_ext
+ernalities::MultiRemo
+valResults {
+    |          
+++++++++++++++++++
+
+error[E0277]: the 
+trait bound `ReadOnly
+Externalities<'a, H, 
+B>: sp_externalities:
+:extensions::Extensio
+nStore` is not 
+satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:83:59
+    |
+ 83 | impl<'a, H: 
+Hasher, B: 'a + 
+Backend<H>> 
+Externalities for Rea
+dOnlyExternalities<'a
+, H, B>
+    |                
+                     
+                     
+ ^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^ 
+unsatisfied trait 
+bound
+    |
+help: the trait `sp_e
+xternalities::extensi
+ons::ExtensionStore` 
+is not implemented 
+for `ReadOnlyExternal
+ities<'a, H, B>`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:60:1
+    |
+ 60 | pub struct Read
+OnlyExternalities<'a,
+ H: Hasher, B: 'a + 
+Backend<H>> {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\extens
+ions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^ this is 
+the expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\ex
+tensions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ---------------
+--------- this is 
+the found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+note: required by a 
+bound in `sp_core::tr
+aits::Externalities`
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:26
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    |                
+          
+^^^^^^^^^^^^^^ 
+required by this 
+bound in 
+`Externalities`
+    = note: 
+`Externalities` is a 
+"sealed trait", 
+because to implement 
+it you also need to 
+implement `sp_externa
+lities::extensions::E
+xtensionStore`, 
+which is not 
+accessible; this is 
+usually done to 
+force you to use one 
+of the provided 
+types that already 
+implement it
+
+error[E0277]: the 
+trait bound 
+`BasicExternalities: 
+sp_externalities::Ext
+ernalities` is not 
+satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:108:52
+    |
+108 |         sp_exte
+rnalities::set_and_ru
+n_with_externalities(
+self, f)
+    |                
+                     
+                     
+^^^^ unsatisfied 
+trait bound
+    |
+help: the trait `sp_e
+xternalities::Externa
+lities` is not 
+implemented for 
+`BasicExternalities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:41:1
+    |
+ 41 | pub struct 
+BasicExternalities {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\li
+b.rs:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^ this is the 
+expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ---------------
+---------------------
+--- this is the 
+found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+help: the trait `sp_e
+xternalities::Externa
+lities` is 
+implemented for 
+`ext::Ext<'a, H, B>`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:160:1
+    |
+160 | / impl<'a, H, 
+B> Externalities for 
+Ext<'a, H, B>
+161 | | where
+162 | |     H: 
+Hasher,
+163 | |     H::Out: 
+Ord + 'static + 
+codec::Codec,
+164 | |     B: 
+Backend<H>,
+    | 
+|__________________^
+    = note: required 
+for the cast from 
+`&mut 
+BasicExternalities` 
+to `&mut dyn sp_exter
+nalities::Externaliti
+es`
+
+error[E0277]: the 
+trait bound 
+`BasicExternalities: 
+sp_externalities::ext
+ensions::ExtensionSto
+re` is not satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:168:8
+    |
+168 |         self.st
+orage(key).map(|v| Bl
+ake2Hasher::hash(&v).
+encode())
+    |              
+^^^^^^^ unsatisfied 
+trait bound
+    |
+help: the trait `sp_e
+xternalities::extensi
+ons::ExtensionStore` 
+is not implemented 
+for 
+`BasicExternalities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:41:1
+    |
+ 41 | pub struct 
+BasicExternalities {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\extens
+ions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^ this is 
+the expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\ex
+tensions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ---------------
+--------- this is 
+the found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+note: required by a 
+bound in `sp_core::tr
+aits::Externalities::
+storage`
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:26
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    |                
+          
+^^^^^^^^^^^^^^ 
+required by this 
+bound in `Externaliti
+es::storage`
+...
+ 87 |     fn 
+storage(&self, key: 
+&[u8]) -> 
+Option<Vec<u8>>;
+    |        ------- 
+required by a bound 
+in this associated 
+function
+
+error[E0277]: the 
+trait bound 
+`BasicExternalities: 
+sp_externalities::ext
+ensions::ExtensionSto
+re` is not satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:176:8
+    |
+176 |         self.ch
+ild_storage(child_inf
+o, key).map(|v| Blake
+2Hasher::hash(&v).enc
+ode())
+    |              
+^^^^^^^^^^^^^ 
+unsatisfied trait 
+bound
+    |
+help: the trait `sp_e
+xternalities::extensi
+ons::ExtensionStore` 
+is not implemented 
+for 
+`BasicExternalities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:41:1
+    |
+ 41 | pub struct 
+BasicExternalities {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\extens
+ions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^ this is 
+the expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\ex
+tensions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ---------------
+--------- this is 
+the found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+note: required by a 
+bound in `sp_core::tr
+aits::Externalities::
+child_storage`
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:26
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    |                
+          
+^^^^^^^^^^^^^^ 
+required by this 
+bound in `Externaliti
+es::child_storage`
+...
+104 |     fn 
+child_storage(&self, 
+child_info: 
+&ChildInfo, key: 
+&[u8]) -> 
+Option<Vec<u8>>;
+    |        
+------------- 
+required by a bound 
+in this associated 
+function
+
+error[E0277]: the 
+trait bound 
+`BasicExternalities: 
+sp_externalities::ext
+ensions::ExtensionSto
+re` is not satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:263:26
+    |
+263 |             
+let child_root = self
+.child_storage_root(&
+child_info, 
+state_version);
+    |                
+                   
+^^^^^^^^^^^^^^^^^^ 
+unsatisfied trait 
+bound
+    |
+help: the trait `sp_e
+xternalities::extensi
+ons::ExtensionStore` 
+is not implemented 
+for 
+`BasicExternalities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:41:1
+    |
+ 41 | pub struct 
+BasicExternalities {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\extens
+ions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^ this is 
+the expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\ex
+tensions.rs:132:1
+    |
+132 | pub trait 
+ExtensionStore {
+    | ---------------
+--------- this is 
+the found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+note: required by a 
+bound in `sp_core::tr
+aits::Externalities::
+child_storage_root`
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:26
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    |                
+          
+^^^^^^^^^^^^^^ 
+required by this 
+bound in `Externaliti
+es::child_storage_roo
+t`
+...
+207 |     fn 
+child_storage_root(
+    |        
+------------------ 
+required by a bound 
+in this associated 
+function
+
+error[E0277]: the 
+trait bound `ReadOnly
+Externalities<'a, H, 
+B>: sp_externalities:
+:Externalities` is 
+not satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:79:52
+    |
+ 79 |         sp_exte
+rnalities::set_and_ru
+n_with_externalities(
+self, f)
+    |                
+                     
+                     
+^^^^ unsatisfied 
+trait bound
+    |
+help: the trait `sp_e
+xternalities::Externa
+lities` is not 
+implemented for `Read
+OnlyExternalities<'a,
+ H, B>`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:60:1
+    |
+ 60 | pub struct Read
+OnlyExternalities<'a,
+ H: Hasher, B: 'a + 
+Backend<H>> {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\li
+b.rs:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^ this is the 
+expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ---------------
+---------------------
+--- this is the 
+found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+help: the trait `sp_e
+xternalities::Externa
+lities` is 
+implemented for 
+`ext::Ext<'a, H, B>`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:160:1
+    |
+160 | / impl<'a, H, 
+B> Externalities for 
+Ext<'a, H, B>
+161 | | where
+162 | |     H: 
+Hasher,
+163 | |     H::Out: 
+Ord + 'static + 
+codec::Codec,
+164 | |     B: 
+Backend<H>,
+    | 
+|__________________^
+    = note: required 
+for the cast from 
+`&mut ReadOnlyExterna
+lities<'a, H, B>` to 
+`&mut dyn sp_external
+ities::Externalities`
+
+error[E0277]: the 
+trait bound 
+`ext::Ext<'_, H, B>: 
+sp_core::traits::Exte
+rnalities` is not 
+satisfied
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\li
+b.rs:291:11
+    |
+291 |                
+ .call(&mut ext, 
+self.runtime_code, 
+self.method, 
+self.call_data, 
+self.context)
+    |                
+       ^^^^^^^^ 
+unsatisfied trait 
+bound
+    |
+help: the trait `sp_c
+ore::traits::External
+ities` is not 
+implemented for 
+`ext::Ext<'_, H, B>`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ex
+t.rs:94:1
+    |
+ 94 | pub struct 
+Ext<'a, H, B>
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^
+note: there are 
+multiple different 
+versions of crate 
+`sp_externalities` 
+in the dependency 
+graph
+   --> C:\Users\owlta
+\.cargo\git\checkouts
+\polkadot-sdk-dee0edd
+6eefa0594\2fe3145\sub
+strate\primitives\ext
+ernalities\src\lib.rs
+:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^ this is the 
+expected trait
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-extern
+alities-0.25.0\src\li
+b.rs:82:1
+    |
+ 82 | pub trait 
+Externalities: 
+ExtensionStore {
+    | ---------------
+---------------------
+--- this is the 
+found trait
+    = help: you can 
+use `cargo tree` to 
+explore your 
+dependency tree
+help: the following 
+other types 
+implement trait `sp_c
+ore::traits::External
+ities`
+   --> C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\ba
+sic.rs:160:1
+    |
+160 |   impl 
+Externalities for 
+BasicExternalities {
+    |   ^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^ 
+`BasicExternalities`
+    |
+   ::: C:\Users\owlta
+\.cargo\registry\src\
+index.crates.io-1949c
+f8c6b5b557f\sp-state-
+machine-0.35.0\src\re
+ad_only.rs:83:1
+    |
+ 83 | / impl<'a, H: 
+Hasher, B: 'a + 
+Backend<H>> 
+Externalities for Rea
+dOnlyExternalities<'a
+, H, B>
+ 84 | | where
+ 85 | |     H::Out: 
+Encode,
+    | |______________
+_____^ `ReadOnlyExter
+nalities<'a, H, B>`
+    = note: required 
+for the cast from 
+`&mut ext::Ext<'_, 
+H, B>` to `&mut dyn s
+p_core::traits::Exter
+nalities`
+
+Some errors have 
+detailed 
+explanations: E0053, 
+E0277.
+For more information 
+about an error, try 
+`rustc --explain 
+E0053`.
+error: could not 
+compile 
+`sp-state-machine` 
+(lib) due to 25 
+previous errors
+warning: build 
+failed, waiting for 
+other jobs to 
+finish...

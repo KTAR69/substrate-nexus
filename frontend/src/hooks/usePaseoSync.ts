@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 interface NetworkState {
+    api: ApiPromise | null;
     blockNumber: number;
     finalizedBlock: number;
     networkStatus: 'Connected' | 'Disconnected' | 'Connecting';
@@ -10,6 +11,7 @@ interface NetworkState {
 
 export const usePaseoSync = () => {
     const [state, setState] = useState<NetworkState>({
+        api: null,
         blockNumber: 0,
         finalizedBlock: 0,
         networkStatus: 'Disconnected',
@@ -17,7 +19,7 @@ export const usePaseoSync = () => {
 
     useEffect(() => {
         let api: ApiPromise | null = null;
-        // Prioritize local node for development as requested, fallback to Paseo
+        // Connect to Local Node for Development (where the Pallet exists)
         const wsUrl = 'ws://127.0.0.1:9944';
         const provider = new WsProvider(wsUrl);
 
@@ -26,10 +28,13 @@ export const usePaseoSync = () => {
 
             try {
                 api = await ApiPromise.create({ provider });
+                await api.isReady; // Wait for full initialization
+
+                setState(prev => ({ ...prev, api, networkStatus: 'Connected', error: undefined }));
+                console.log('[Paseo] API Ready');
 
                 // Event listeners for connection status
                 provider.on('connected', () => {
-                    setState(prev => ({ ...prev, networkStatus: 'Connected', error: undefined }));
                     console.log('[Paseo] WebSocket Connected');
                 });
 
@@ -48,6 +53,7 @@ export const usePaseoSync = () => {
                     setState(prev => ({
                         ...prev,
                         blockNumber: header.number.toNumber(),
+                        networkStatus: 'Connected' // Force connected state on active data
                     }));
                 });
 

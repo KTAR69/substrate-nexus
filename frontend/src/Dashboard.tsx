@@ -1,42 +1,17 @@
-import React, { useState } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import React from 'react';
 import { DASHBOARD_CONTENT } from './data/mockData';
 import { BlockMonitor } from './components/stitch/BlockMonitor';
-
-const firebaseConfig = {
-    // ... config (placeholders as per previous iterations)
-    apiKey: "AIzaSy...YourKey",
-    authDomain: "substrate-nexus-9182.firebaseapp.com",
-    projectId: "substrate-nexus-9182",
-    storageBucket: "substrate-nexus-9182.appspot.com",
-    messagingSenderId: "982569499047",
-    appId: "1:982569499047:web:..."
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+import { DashboardHeader } from './components/stitch/DashboardHeader';
+import { RegistrationForm } from './components/stitch/RegistrationForm';
 
 export const Dashboard: React.FC = () => {
-    // Keeping consultants state for potential Firestore integration in the Gatekeeper card
-    const [consultants, setConsultants] = useState<any[]>([]);
-
     return (
         <div className="min-h-screen bg-background text-white p-6 font-sans flex flex-col gap-6">
-            {/* Header */}
-            <header className="flex justify-between items-center p-4 bg-surface border border-mint-500/30 rounded-xl backdrop-blur-md shadow-neon">
-                <div className="flex items-center gap-2 text-mint-400 font-mono font-bold tracking-widest">
-                    <span>{DASHBOARD_CONTENT.header.logo}</span>
-                    <span>{DASHBOARD_CONTENT.header.title}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                    <span className="w-2 h-2 rounded-full bg-mint-400 animate-pulse shadow-[0_0_10px_#00ff9d]"></span>
-                    <span>{DASHBOARD_CONTENT.header.status}</span>
-                </div>
-            </header>
+            {/* Header with Live Status */}
+            <DashboardHeader />
 
             <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
-                {/* 1. Modular Block Monitor Component */}
+                {/* 1. Live Block Monitor Component */}
                 <BlockMonitor />
 
                 {/* 2. Coretime Status Card */}
@@ -80,6 +55,9 @@ export const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* 4. Verified Consultant Registration Form (Full Width) */}
+                <RegistrationForm />
             </main>
         </div>
     );
