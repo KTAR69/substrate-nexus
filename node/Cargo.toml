@@ -30,7 +30,7 @@ pallet-transaction-payment.default-features = true
 pallet-transaction-payment.workspace = true
 sc-basic-authorship.default-features = true
 sc-basic-authorship.workspace = true
-sc-cli.default-features = true
+sc-cli.default-features = false
 sc-cli.workspace = true
 sc-client-api.default-features = true
 sc-client-api.workspace = true
@@ -46,7 +46,7 @@ sc-network.default-features = true
 sc-network.workspace = true
 sc-offchain.default-features = true
 sc-offchain.workspace = true
-sc-service.default-features = true
+sc-service.default-features = false
 sc-service.workspace = true
 sc-telemetry.default-features = true
 sc-telemetry.workspace = true
@@ -91,7 +91,7 @@ std = ["solochain-template-runtime/std"]
 runtime-benchmarks = [
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
-	"pallet-transaction-payment/runtime-benchmarks",
+	
 	"sc-service/runtime-benchmarks",
 	"solochain-template-runtime/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",

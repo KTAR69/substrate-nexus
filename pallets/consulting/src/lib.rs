@@ -9,14 +9,16 @@ mod benchmarking;
 
 #[cfg(test)]
 mod mock;
+#[cfg(test)]
+mod tests;
 
 #[frame_support::pallet]
 pub mod pallet {
-    use frame_support::pallet_prelude::*;
-    use frame_system::pallet_prelude::*;
-    use frame_support::traits::{Currency, ReservableCurrency, EnsureOrigin};
-    use sp_std::vec::Vec;
     use crate::weights::WeightInfo;
+    use frame_support::pallet_prelude::*;
+    use frame_support::traits::{Currency, EnsureOrigin, ReservableCurrency};
+    use frame_system::pallet_prelude::*;
+    use sp_std::vec::Vec;
 
     #[pallet::pallet]
     pub struct Pallet<T>(_);
@@ -24,7 +26,7 @@ pub mod pallet {
     #[pallet::config]
     pub trait Config: frame_system::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-        
+
         /// The maximum length of a consultant's name.
         #[pallet::constant]
         type MaxNameLength: Get<u32>;
@@ -46,27 +48,18 @@ pub mod pallet {
         type WeightInfo: WeightInfo;
     }
 
-    pub type BalanceOf<T> = <<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
+    pub type BalanceOf<T> =
+        <<T as Config>::Currency as Currency<<T as frame_system::Config>::AccountId>>::Balance;
 
     #[pallet::storage]
     #[pallet::getter(fn consultants)]
-    pub type Consultants<T: Config> = StorageMap<
-        _, 
-        Blake2_128Concat, 
-        T::AccountId, 
-        BoundedVec<u8, T::MaxNameLength>, 
-        ValueQuery
-    >;
+    pub type Consultants<T: Config> =
+        StorageMap<_, Blake2_128Concat, T::AccountId, BoundedVec<u8, T::MaxNameLength>, ValueQuery>;
 
     #[pallet::storage]
     #[pallet::getter(fn verified_consultants)]
-    pub type VerifiedConsultants<T: Config> = StorageMap<
-        _, 
-        Blake2_128Concat, 
-        T::AccountId, 
-        bool, 
-        ValueQuery
-    >;
+    pub type VerifiedConsultants<T: Config> =
+        StorageMap<_, Blake2_128Concat, T::AccountId, bool, ValueQuery>;
 
     #[pallet::event]
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
@@ -96,7 +89,7 @@ pub mod pallet {
             }
 
             // Convert Vec to BoundedVec
-            let bounded_name: BoundedVec<u8, T::MaxNameLength> = 
+            let bounded_name: BoundedVec<u8, T::MaxNameLength> =
                 name.try_into().map_err(|_| Error::<T>::NameTooLong)?;
 
             // Reserve the deposit
