@@ -15,7 +15,7 @@ cargo run --release --bin solochain-template-node -- --dev --tmp > node.log 2>&1
 # 2. Start the Frontend (in background)
 echo "💻 [2/3] Launching Dashboard..."
 cd frontend
-npm run dev -- --host 0.0.0.0 > frontend.log 2>&1 &
+npm run dev -- --host 127.0.0.1 > frontend.log 2>&1 &
 cd ..
 
 # 3. Start the Tunnel & Extract URL
