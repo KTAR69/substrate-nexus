@@ -1,0 +1,212 @@
+name: Security Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check for preinstall/postinstall scripts
+        id: check-scripts
+        run: |
+          echo "## 🔍 Checking for install scripts" >> $GITHUB_STEP_SUMMARY
+          
+          FOUND_SCRIPTS=0
+          
+          # Check all package.json files for preinstall/postinstall scripts
+          find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/target/*" | while read file; do
+            if grep -E "\"(pre|post)install\":" "$file"; then
+              echo "⚠️ Found install script in $file" | tee -a $GITHUB_STEP_SUMMARY
+              grep -A 1 -E "\"(pre|post)install\":" "$file" | tee -a $GITHUB_STEP_SUMMARY
+              FOUND_SCRIPTS=1
+            fi
+          done
+          
+          if [ $FOUND_SCRIPTS -eq 0 ]; then
+            echo "✅ No suspicious install scripts found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Validate no eval() or obfuscated code
+        id: check-obfuscation
+        run: |
+          echo "## 🔍 Checking for obfuscated code" >> $GITHUB_STEP_SUMMARY
+          
+          FOUND_ISSUES=0
+          
+          # Check for eval() usage
+          echo "### Checking for eval() usage" >> $GITHUB_STEP_SUMMARY
+          if grep -rn "eval(" --include="*.js" --include="*.ts" --exclude-dir=node_modules --exclude-dir=target . 2>/dev/null; then
+            echo "⚠️ Found eval() usage - please review" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No eval() usage found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check for Function constructor
+          echo "### Checking for Function constructor" >> $GITHUB_STEP_SUMMARY
+          if grep -rn "new Function(" --include="*.js" --include="*.ts" --exclude-dir=node_modules --exclude-dir=target . 2>/dev/null; then
+            echo "⚠️ Found Function constructor usage - please review" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No Function constructor usage found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check for Unicode variation selectors
+          echo "### Checking for Unicode variation selectors" >> $GITHUB_STEP_SUMMARY
+          if grep -rnP "[\x{FE00}-\x{FE0F}\x{E0100}-\x{E01EF}]" --include="*.js" --include="*.ts" --exclude-dir=node_modules --exclude-dir=target . 2>/dev/null; then
+            echo "⚠️ Found Unicode variation selectors - possible obfuscation" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No Unicode variation selectors found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ $FOUND_ISSUES -eq 0 ]; then
+            echo "✅ No obfuscated code patterns detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Scan for suspicious patterns
+        id: check-patterns
+        run: |
+          echo "## 🔍 Scanning for suspicious patterns" >> $GITHUB_STEP_SUMMARY
+          
+          FOUND_ISSUES=0
+          
+          # Check for hardcoded credentials
+          echo "### Checking for hardcoded credentials" >> $GITHUB_STEP_SUMMARY
+          if grep -rE "password\s*=\s*['\"][^'\"]{3,}['\"]|api[_-]?key\s*=\s*['\"][^'\"]{10,}['\"]|secret\s*=\s*['\"][^'\"]{10,}['\"]" \
+            --include="*.js" --include="*.ts" --include="*.json" --include="*.yml" --include="*.yaml" \
+            --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git \
+            . 2>/dev/null | grep -v "process.env" | grep -v "YOUR_" | grep -v "EXAMPLE" | grep -v "placeholder" | head -10; then
+            echo "⚠️ Potential hardcoded credentials found - please review" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No hardcoded credentials detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check for AWS keys
+          echo "### Checking for AWS access keys" >> $GITHUB_STEP_SUMMARY
+          if grep -rE "AKIA[0-9A-Z]{16}" --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git . 2>/dev/null; then
+            echo "⚠️ Potential AWS access key found - please review" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No AWS access keys detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check for private keys
+          echo "### Checking for private keys" >> $GITHUB_STEP_SUMMARY
+          if grep -r "BEGIN.*PRIVATE KEY" --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git . 2>/dev/null; then
+            echo "⚠️ Private key found - please review" >> $GITHUB_STEP_SUMMARY
+            FOUND_ISSUES=1
+          else
+            echo "✅ No private keys detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Check for suspicious URLs
+          echo "### Checking for suspicious URLs" >> $GITHUB_STEP_SUMMARY
+          if grep -rE "https?://[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" \
+            --include="*.js" --include="*.ts" \
+            --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git \
+            . 2>/dev/null | grep -v "127.0.0.1" | grep -v "localhost" | head -5; then
+            echo "⚠️ Found hardcoded IP addresses - please review" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No suspicious IP addresses detected" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Run npm audit (root)
+        id: audit-root
+        continue-on-error: true
+        run: |
+          echo "## 📦 npm audit - Root Directory" >> $GITHUB_STEP_SUMMARY
+          if [ -f "package.json" ]; then
+            npm audit --audit-level=moderate 2>&1 | tee audit-root.txt || true
+            if [ -s audit-root.txt ]; then
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              head -50 audit-root.txt >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "No package.json found in root" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Run npm audit (frontend)
+        id: audit-frontend
+        continue-on-error: true
+        run: |
+          echo "## 📦 npm audit - Frontend Directory" >> $GITHUB_STEP_SUMMARY
+          if [ -f "frontend/package.json" ]; then
+            cd frontend
+            npm audit --audit-level=moderate 2>&1 | tee ../audit-frontend.txt || true
+            if [ -s ../audit-frontend.txt ]; then
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              head -50 ../audit-frontend.txt >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "No package.json found in frontend" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Run npm audit (backend)
+        id: audit-backend
+        continue-on-error: true
+        run: |
+          echo "## 📦 npm audit - Backend Directory" >> $GITHUB_STEP_SUMMARY
+          if [ -f "backend/package.json" ]; then
+            cd backend
+            npm audit --audit-level=moderate 2>&1 | tee ../audit-backend.txt || true
+            if [ -s ../audit-backend.txt ]; then
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              head -50 ../audit-backend.txt >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "No package.json found in backend" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check for dependency confusion
+        id: check-confusion
+        run: |
+          echo "## 🔍 Checking for dependency confusion risks" >> $GITHUB_STEP_SUMMARY
+          
+          # Check for scoped packages that might be at risk
+          find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/target/*" | while read file; do
+            if grep -E "\"@[^/]+/[^\"]+\":" "$file" 2>/dev/null; then
+              echo "Found scoped packages in $file - ensure they're from trusted sources" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+          
+          echo "✅ Dependency confusion check completed" >> $GITHUB_STEP_SUMMARY
+
+      - name: Security scan summary
+        if: always()
+        run: |
+          echo "## 🎯 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All security checks have been completed. Please review the findings above." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Recommendations:" >> $GITHUB_STEP_SUMMARY
+          echo "- Review any warnings or suspicious patterns found" >> $GITHUB_STEP_SUMMARY
+          echo "- Address npm audit vulnerabilities with \`npm audit fix\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Ensure no credentials are committed to the repository" >> $GITHUB_STEP_SUMMARY
+          echo "- Verify all dependencies are from trusted sources" >> $GITHUB_STEP_SUMMARY
+
+# Made with Bob

@@ -1,0 +1,148 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔒 Running security checks..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track if any security issues are found
+SECURITY_ISSUES=0
+
+# Function to check for obfuscated code patterns
+check_obfuscated_code() {
+    echo "🔍 Checking for obfuscated code patterns..."
+    
+    # Get list of staged files
+    STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|ts|jsx|tsx)$')
+    
+    if [ -z "$STAGED_FILES" ]; then
+        echo "${GREEN}✓ No JavaScript/TypeScript files to check${NC}"
+        return 0
+    fi
+    
+    for FILE in $STAGED_FILES; do
+        # Check for eval() usage
+        if grep -n "eval(" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Found eval() in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+        
+        # Check for Function constructor
+        if grep -n "new Function(" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Found Function constructor in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+        
+        # Check for Unicode variation selectors (common obfuscation technique)
+        if grep -nP "[\x{FE00}-\x{FE0F}\x{E0100}-\x{E01EF}]" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Found Unicode variation selectors in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+        
+        # Check for suspicious hex/unicode escapes
+        if grep -nE "\\\\x[0-9a-fA-F]{2}|\\\\u[0-9a-fA-F]{4}" "$FILE" 2>/dev/null | grep -v "node_modules" | head -5; then
+            echo "${YELLOW}⚠ Found hex/unicode escapes in $FILE (review manually)${NC}"
+        fi
+    done
+    
+    if [ $SECURITY_ISSUES -eq 0 ]; then
+        echo "${GREEN}✓ No obfuscated code patterns detected${NC}"
+    fi
+}
+
+# Function to check for suspicious preinstall/postinstall scripts
+check_package_scripts() {
+    echo "🔍 Checking for suspicious package.json scripts..."
+    
+    # Get list of staged package.json files
+    PACKAGE_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "package.json$")
+    
+    if [ -z "$PACKAGE_FILES" ]; then
+        echo "${GREEN}✓ No package.json files to check${NC}"
+        return 0
+    fi
+    
+    for FILE in $PACKAGE_FILES; do
+        # Check for preinstall/postinstall scripts
+        if grep -n "\"preinstall\":" "$FILE" 2>/dev/null; then
+            echo "${YELLOW}⚠ Found preinstall script in $FILE${NC}"
+            grep -A 1 "\"preinstall\":" "$FILE"
+            echo "${YELLOW}Please review this script carefully${NC}"
+        fi
+        
+        if grep -n "\"postinstall\":" "$FILE" 2>/dev/null; then
+            echo "${YELLOW}⚠ Found postinstall script in $FILE${NC}"
+            grep -A 1 "\"postinstall\":" "$FILE"
+            echo "${YELLOW}Please review this script carefully${NC}"
+        fi
+        
+        # Check for suspicious commands in scripts
+        if grep -E "curl|wget|nc|bash -c|sh -c|python -c|perl -e" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Found suspicious commands in $FILE scripts${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+    done
+}
+
+# Function to check for hardcoded credentials
+check_hardcoded_credentials() {
+    echo "🔍 Checking for hardcoded credentials..."
+    
+    # Get list of staged files (excluding certain file types)
+    STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -vE '\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$')
+    
+    if [ -z "$STAGED_FILES" ]; then
+        echo "${GREEN}✓ No files to check${NC}"
+        return 0
+    fi
+    
+    for FILE in $STAGED_FILES; do
+        # Skip binary files
+        if file "$FILE" 2>/dev/null | grep -q "binary"; then
+            continue
+        fi
+        
+        # Check for common credential patterns
+        if grep -nEi "password\s*=\s*['\"][^'\"]{3,}['\"]|api[_-]?key\s*=\s*['\"][^'\"]{10,}['\"]|secret\s*=\s*['\"][^'\"]{10,}['\"]|token\s*=\s*['\"][^'\"]{10,}['\"]" "$FILE" 2>/dev/null | grep -v "process.env" | grep -v "YOUR_" | grep -v "EXAMPLE" | grep -v "placeholder"; then
+            echo "${RED}✗ Potential hardcoded credentials found in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+        
+        # Check for AWS keys
+        if grep -nE "AKIA[0-9A-Z]{16}" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Potential AWS access key found in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+        
+        # Check for private keys
+        if grep -n "BEGIN.*PRIVATE KEY" "$FILE" 2>/dev/null; then
+            echo "${RED}✗ Private key found in $FILE${NC}"
+            SECURITY_ISSUES=$((SECURITY_ISSUES + 1))
+        fi
+    done
+    
+    if [ $SECURITY_ISSUES -eq 0 ]; then
+        echo "${GREEN}✓ No hardcoded credentials detected${NC}"
+    fi
+}
+
+# Run all security checks
+check_obfuscated_code
+check_package_scripts
+check_hardcoded_credentials
+
+# Exit with error if security issues were found
+if [ $SECURITY_ISSUES -gt 0 ]; then
+    echo ""
+    echo "${RED}❌ Security check failed! Found $SECURITY_ISSUES issue(s).${NC}"
+    echo "${YELLOW}Please fix the security issues before committing.${NC}"
+    exit 1
+fi
+
+echo ""
+echo "${GREEN}✅ All security checks passed!${NC}"
+exit 0

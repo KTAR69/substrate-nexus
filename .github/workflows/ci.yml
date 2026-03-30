@@ -82,3 +82,93 @@ jobs:
       - name: Build the Dockerfile
         run: docker build . -t polkadot-sdk-solochain-template
         timeout-minutes: 90
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run npm audit in root
+        run: |
+          if [ -f "package.json" ]; then
+            echo "Running npm audit in root directory..."
+            npm audit --audit-level=moderate || true
+          fi
+        continue-on-error: true
+
+      - name: Run npm audit in frontend
+        run: |
+          if [ -f "frontend/package.json" ]; then
+            echo "Running npm audit in frontend directory..."
+            cd frontend
+            npm audit --audit-level=moderate || true
+          fi
+        continue-on-error: true
+
+      - name: Run npm audit in backend
+        run: |
+          if [ -f "backend/package.json" ]; then
+            echo "Running npm audit in backend directory..."
+            cd backend
+            npm audit --audit-level=moderate || true
+          fi
+        continue-on-error: true
+
+      - name: Check for obfuscated code
+        run: |
+          echo "Checking for obfuscated code patterns..."
+          
+          # Check for eval() usage
+          if grep -r "eval(" --include="*.js" --include="*.ts" --exclude-dir=node_modules --exclude-dir=target .; then
+            echo "⚠️ Warning: Found eval() usage"
+          fi
+          
+          # Check for Function constructor
+          if grep -r "new Function(" --include="*.js" --include="*.ts" --exclude-dir=node_modules --exclude-dir=target .; then
+            echo "⚠️ Warning: Found Function constructor usage"
+          fi
+          
+          echo "✓ Obfuscated code check completed"
+
+      - name: Check for suspicious package scripts
+        run: |
+          echo "Checking for suspicious package.json scripts..."
+          
+          # Check all package.json files for preinstall/postinstall scripts
+          find . -name "package.json" -not -path "*/node_modules/*" -not -path "*/target/*" | while read file; do
+            if grep -E "\"(pre|post)install\":" "$file"; then
+              echo "⚠️ Warning: Found install script in $file"
+              grep -A 1 -E "\"(pre|post)install\":" "$file"
+            fi
+          done
+          
+          echo "✓ Package script check completed"
+
+      - name: Check for hardcoded credentials
+        run: |
+          echo "Checking for hardcoded credentials..."
+          
+          # Check for common credential patterns
+          if grep -rE "password\s*=\s*['\"][^'\"]{3,}['\"]|api[_-]?key\s*=\s*['\"][^'\"]{10,}['\"]|secret\s*=\s*['\"][^'\"]{10,}['\"]" \
+            --include="*.js" --include="*.ts" --include="*.json" --include="*.yml" --include="*.yaml" \
+            --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git \
+            . | grep -v "process.env" | grep -v "YOUR_" | grep -v "EXAMPLE" | grep -v "placeholder"; then
+            echo "⚠️ Warning: Potential hardcoded credentials found"
+          fi
+          
+          # Check for AWS keys
+          if grep -rE "AKIA[0-9A-Z]{16}" --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git .; then
+            echo "⚠️ Warning: Potential AWS access key found"
+          fi
+          
+          # Check for private keys
+          if grep -r "BEGIN.*PRIVATE KEY" --exclude-dir=node_modules --exclude-dir=target --exclude-dir=.git .; then
+            echo "⚠️ Warning: Private key found"
+          fi
+          
+          echo "✓ Credential check completed"
