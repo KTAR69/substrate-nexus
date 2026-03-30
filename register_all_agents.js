@@ -18,6 +18,7 @@ function pubkeyToDidKey(pubkeyU8a) {
 const AGENTS = [
     { name: 'Byte', uri: '//NexusHub//Byte', role: 'physical_dpai' },
     { name: 'Giga', uri: '//NexusHub//Giga', role: 'physical_dpai' },
+    { name: 'Jules', uri: '//NexusHub//Jules', role: 'physical_dpai' },
     { name: 'OffRoadSDV', uri: '//NexusHub//OffRoadSDV', role: 'sdv_node' },
 ];
 
