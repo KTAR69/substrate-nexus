@@ -19,6 +19,13 @@
 .env.test.local
 .env.production.local
 
+# Explicit patterns for all subdirectories
+**/.env
+**/frontend/.env
+**/backend/.env
+frontend/.env
+backend/.env
+
 # Google Cloud Platform credentials
 .runtimeconfig.json
 *-credentials.json
