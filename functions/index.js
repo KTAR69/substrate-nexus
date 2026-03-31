@@ -1,9 +1,17 @@
-const functions = require('firebase-functions');
+const {onRequest} = require('firebase-functions/v2/https');
+const {onDocumentCreated} = require('firebase-functions/v2/firestore');
+const {setGlobalOptions} = require('firebase-functions/v2');
 const admin = require('firebase-admin');
 const axios = require('axios');
 
 admin.initializeApp();
 const db = admin.firestore();
+
+// Set global options for all functions
+setGlobalOptions({
+    region: 'us-central1',
+    maxInstances: 10
+});
 
 // NVIDIA NIM Configuration
 const NVIDIA_CONFIG = {
@@ -16,7 +24,7 @@ const NVIDIA_CONFIG = {
  * vconIngest - Ingests vCon telemetry from UE5 agents
  * Triggered by HTTP POST from UE5 Blueprints
  */
-exports.vconIngest = functions.https.onRequest(async (req, res) => {
+exports.vconIngest = onRequest(async (req, res) => {
     try {
         if (req.method !== 'POST') {
             return res.status(405).json({ error: 'Method not allowed' });
@@ -54,13 +62,17 @@ exports.vconIngest = functions.https.onRequest(async (req, res) => {
  * Triggered by new documents in event_stream collection
  * Generates commands and writes to command_queue
  */
-exports.nimRouter = functions.firestore
-    .document('event_stream/{eventId}')
-    .onCreate(async (snap, context) => {
+exports.nimRouter = onDocumentCreated('event_stream/{eventId}', async (event) => {
         try {
+            const snap = event.data;
+            if (!snap) {
+                console.log('[nimRouter] No data in event');
+                return null;
+            }
+            
             const eventData = snap.data();
             const agentDid = eventData.agent_did;
-            const eventId = context.params.eventId;
+            const eventId = event.params.eventId;
 
             console.log('[nimRouter] Processing event:', eventId, 'for agent:', agentDid);
 
@@ -154,15 +166,15 @@ exports.nimRouter = functions.firestore
             
             // Log error to nim_log
             await db.collection('nim_log').add({
-                event_id: context.params.eventId,
-                agent_did: snap.data().agent_did,
+                event_id: event.params.eventId,
+                agent_did: event.data?.data()?.agent_did,
                 error: error.message,
                 timestamp: admin.firestore.FieldValue.serverTimestamp()
             });
 
             return null;
         }
-    });
+});
 
 /**
  * Helper function to build agent context from event data
@@ -203,7 +215,7 @@ function buildAgentContext(eventData) {
  * getLatestCommand - HTTP endpoint for agents to poll for commands
  * GET /getLatestCommand?agent_did=<did>
  */
-exports.getLatestCommand = functions.https.onRequest(async (req, res) => {
+exports.getLatestCommand = onRequest(async (req, res) => {
     try {
         const agentDid = req.query.agent_did;
 
@@ -256,7 +268,7 @@ exports.getLatestCommand = functions.https.onRequest(async (req, res) => {
  * observatoryFeed - HTTP endpoint to get recent events for Observatory Brain
  * GET /observatoryFeed?limit=<number>
  */
-exports.observatoryFeed = functions.https.onRequest(async (req, res) => {
+exports.observatoryFeed = onRequest(async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 50;
 

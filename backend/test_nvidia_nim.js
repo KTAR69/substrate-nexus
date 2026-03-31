@@ -2,21 +2,21 @@ require('dotenv').config({ path: '../.env' });
 const axios = require('axios');
 
 async function testNvidiaAPI() {
-    console.log('🧪 Testing NVIDIA NIM API Connection...\n');
+    console.log('[TEST] Testing NVIDIA NIM API Connection...\n');
     
     const apiKey = process.env.NVIDIA_NIM_API_KEY;
     const endpoint = process.env.NVIDIA_NIM_ENDPOINT;
     const model = process.env.NVIDIA_NIM_MODEL;
     
     if (!apiKey) {
-        console.error('❌ NVIDIA_NIM_API_KEY not found in environment');
+        console.error('[ERROR] NVIDIA_NIM_API_KEY not found in environment');
         process.exit(1);
     }
     
-    console.log('✅ API Key loaded:', apiKey.substring(0, 20) + '...');
-    console.log('✅ Endpoint:', endpoint);
-    console.log('✅ Model:', model);
-    console.log('\n📡 Sending test request...\n');
+    console.log('[OK] API Key loaded:', apiKey.substring(0, 20) + '...');
+    console.log('[OK] Endpoint:', endpoint);
+    console.log('[OK] Model:', model);
+    console.log('\n[REQUEST] Sending test request...\n');
     
     try {
         const response = await axios.post(
@@ -45,17 +45,17 @@ async function testNvidiaAPI() {
             }
         );
         
-        console.log('✅ SUCCESS! NVIDIA NIM API is working!\n');
-        console.log('📊 Response Details:');
+        console.log('[SUCCESS] NVIDIA NIM API is working!\n');
+        console.log('[RESPONSE] Response Details:');
         console.log('   Model:', response.data.model);
         console.log('   Tokens Used:', response.data.usage?.total_tokens || 'N/A');
         console.log('   Finish Reason:', response.data.choices[0]?.finish_reason || 'N/A');
-        console.log('\n💬 AI Response:');
+        console.log('\n[AI] AI Response:');
         console.log('   ', response.data.choices[0]?.message?.content || 'No response');
-        console.log('\n🎉 NVIDIA NIM integration is ready for Phase 1!');
+        console.log('\n[READY] NVIDIA NIM integration is ready for Phase 1!');
         
     } catch (error) {
-        console.error('❌ NVIDIA NIM API Error:\n');
+        console.error('[ERROR] NVIDIA NIM API Error:\n');
         
         if (error.response) {
             console.error('   Status:', error.response.status);
@@ -68,7 +68,7 @@ async function testNvidiaAPI() {
             console.error('   Error:', error.message);
         }
         
-        console.error('\n💡 Troubleshooting:');
+        console.error('\n[HELP] Troubleshooting:');
         console.error('   1. Check API key is valid');
         console.error('   2. Verify endpoint URL is correct');
         console.error('   3. Ensure model name is supported');
