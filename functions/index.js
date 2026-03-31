@@ -23,6 +23,7 @@ const NVIDIA_CONFIG = {
 /**
  * vconIngest - Ingests vCon telemetry from UE5 agents
  * Triggered by HTTP POST from UE5 Blueprints
+ * Supports both Firebase flat format and MongoDB Atlas wrapped format
  */
 exports.vconIngest = onRequest(async (req, res) => {
     try {
@@ -30,10 +31,18 @@ exports.vconIngest = onRequest(async (req, res) => {
             return res.status(405).json({ error: 'Method not allowed' });
         }
 
-        const vconData = req.body;
+        let vconData = req.body;
+        
+        // Handle MongoDB Atlas payload format (wrapped in "document" field)
+        // UVConEmitter sends: { "dataSource": "...", "database": "...", "collection": "...", "document": {...actual data...} }
+        if (vconData.document && typeof vconData.document === 'object') {
+            console.log('[vconIngest] Detected MongoDB Atlas format, unwrapping document field');
+            vconData = vconData.document;
+        }
         
         // Validate required fields
         if (!vconData.agent_did || !vconData.timestamp) {
+            console.error('[vconIngest] Validation failed. Received payload:', JSON.stringify(req.body).substring(0, 500));
             return res.status(400).json({ error: 'Missing required fields: agent_did, timestamp' });
         }
 
@@ -45,9 +54,11 @@ exports.vconIngest = onRequest(async (req, res) => {
 
         console.log('[vconIngest] Stored event:', docRef.id, 'for agent:', vconData.agent_did);
 
+        // Return MongoDB Atlas compatible response format
         res.status(200).json({
             success: true,
             event_id: docRef.id,
+            insertedId: docRef.id, // MongoDB Atlas compatibility
             message: 'vCon telemetry ingested successfully'
         });
 
