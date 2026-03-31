@@ -5,9 +5,6 @@ const axios = require('axios');
 admin.initializeApp();
 const db = admin.firestore();
 
-// Giga's DID - excluded from NIM routing (manual control only)
-const GIGA_DID = 'did:key:z6MkpJDdfoNfdkL8TECYLRFuQyHAVVsgHGPDBWe211dcSTuX';
-
 // NVIDIA NIM Configuration
 const NVIDIA_CONFIG = {
     apiKey: process.env.NVIDIA_NIM_API_KEY,
@@ -67,11 +64,18 @@ exports.nimRouter = functions.firestore
 
             console.log('[nimRouter] Processing event:', eventId, 'for agent:', agentDid);
 
-            // Skip Giga - manual control only
-            if (agentDid === GIGA_DID) {
-                console.log('[nimRouter] Skipping NIM routing for Giga (manual control only)');
+            // Check agent's control mode from metabolic_state collection
+            const agentStateDoc = await db.collection('metabolic_state').doc(agentDid).get();
+            const agentState = agentStateDoc.exists ? agentStateDoc.data() : {};
+            const controlMode = agentState.control_mode || 'ai'; // Default to AI mode
+
+            // Skip if agent is in player mode
+            if (controlMode === 'player') {
+                console.log('[nimRouter] Skipping NIM routing - agent in PLAYER mode:', agentDid);
                 return null;
             }
+
+            console.log('[nimRouter] Agent in AI mode, proceeding with NIM inference');
 
             // Validate NVIDIA API configuration
             if (!NVIDIA_CONFIG.apiKey) {
