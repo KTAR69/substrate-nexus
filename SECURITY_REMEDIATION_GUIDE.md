@@ -12,15 +12,17 @@
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Navigate to your project: `substrate-nexus-9182`
 3. Go to **APIs & Services** → **Credentials**
-4. Find the API key: `AQ.Ab8RN6K2Dcs313NmMjWKKIeaBBmfy_AKC5BaqXbZwr-xxEGcag`
+4. Find the exposed API key (format: `AQ.Ab8RN6K2...`) [ALREADY REVOKED]
 5. Click **Delete** or **Restrict** to revoke access
 6. Generate a new API key with proper restrictions
 
 #### Google Genai API Key
 1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Find the API key: `AIzaSyABoEhfoMwkX4shagbb8YsVZ4JTifkQX20`
+2. Find the exposed API key (format: `AIzaSy...`) [ALREADY REVOKED]
 3. Click **Delete** to revoke the key
 4. Generate a new API key
+
+**NOTE:** The original exposed keys have been revoked and are not shown here for security reasons.
 
 ### Step 2: Remove .env from Git History
 

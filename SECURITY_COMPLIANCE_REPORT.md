@@ -116,11 +116,13 @@ The `.env` file contains **EXPOSED API KEYS** that are tracked in version contro
 
 ```env
 # EXPOSED CREDENTIALS - LINE 14
-STITCH_API_KEY=AQ.Ab8RN6K2Dcs313NmMjWKKIeaBBmfy_AKC5BaqXbZwr-xxEGcag
+STITCH_API_KEY=AQ.Ab8RN6K2Dcs313NmMjWKKIeaBBmfy_AKC5BaqXbZwr-xxEGcag [REDACTED - ALREADY REVOKED]
 
 # EXPOSED CREDENTIALS - LINE 18
-GOOGLE_GENAI_API_KEY=AIzaSyABoEhfoMwkX4shagbb8YsVZ4JTifkQX20
+GOOGLE_GENAI_API_KEY=AIzaSyABoEhfoMwkX4shagbb8YsVZ4JTifkQX20 [REDACTED - ALREADY REVOKED]
 ```
+
+**NOTE:** These keys have been revoked and are shown here for documentation purposes only.
 
 **Impact:**
 - ✅ `.gitignore` properly excludes `.env` files
