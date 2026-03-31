@@ -38,7 +38,7 @@ Configure NVIDIA NIM credentials:
 
 ```bash
 firebase functions:config:set \
-  nvidia.api_key="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" \
+  nvidia.api_key="YOUR_NVIDIA_API_KEY_HERE" \
   nvidia.endpoint="https://integrate.api.nvidia.com/v1" \
   nvidia.model="meta/llama-3.1-70b-instruct"
 ```
@@ -57,7 +57,7 @@ firebase functions:config:get
 ```json
 {
   "nvidia": {
-    "api_key": "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",
+    "api_key": "YOUR_NVIDIA_API_KEY_HERE",
     "endpoint": "https://integrate.api.nvidia.com/v1",
     "model": "meta/llama-3.1-70b-instruct"
   }
