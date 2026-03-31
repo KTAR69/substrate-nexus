@@ -66,23 +66,46 @@ const REGISTRATION_STEPS = [
         name: 'Funding from Alice...',
         execute: async (api, agent, pair, alice) => {
             await sendAndWait(api.tx.balances.transferKeepAlive(agent.ss58, FUND_AMOUNT), alice);
-        }
+        },
+        skipOnError: false // Always fund
     },
     {
         name: 'register_consultant...',
         execute: async (api, agent, pair) => {
             await sendAndWait(api.tx.consulting.registerConsultant(agent.name), pair);
-        }
+        },
+        skipOnError: true, // Skip if already registered
+        errorCodes: ['AlreadyRegistered'] // Expected error codes to skip
     },
     {
         name: 'verify_consultant...',
         execute: async (api, agent, pair, alice) => {
             await sendAndWait(api.tx.consulting.verifyConsultant(agent.ss58), alice);
-        }
+        },
+        skipOnError: true, // Skip if already verified
+        errorCodes: ['AlreadyVerified'] // Expected error codes to skip
     }
 ];
 
 const TOTAL_STEPS = REGISTRATION_STEPS.length;
+
+// Helper to check if error is expected and can be skipped
+function isExpectedError(error, step) {
+    if (!step.skipOnError) return false;
+    
+    const errorMsg = error.message || '';
+    
+    // Check for pallet error codes (e.g., "Dispatch error: 8::AlreadyRegistered")
+    if (step.errorCodes) {
+        for (const code of step.errorCodes) {
+            if (errorMsg.includes(code)) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
 
 // Phase 4: Extract Agent Registration Logic
 async function registerAgent(api, agent, ed25519Keyring, alice) {
@@ -100,7 +123,17 @@ async function registerAgent(api, agent, ed25519Keyring, alice) {
     for (let i = 0; i < TOTAL_STEPS; i++) {
         const step = REGISTRATION_STEPS[i];
         logStep(i + 1, TOTAL_STEPS, step.name);
-        await step.execute(api, agentData, pair, alice);
+        
+        try {
+            await step.execute(api, agentData, pair, alice);
+        } catch (error) {
+            if (isExpectedError(error, step)) {
+                console.log(`      WARNING: Skipped (already done)`);
+                continue;
+            }
+            // Re-throw unexpected errors
+            throw error;
+        }
     }
 
     console.log(`  DONE: ${agent.name} registered and verified\n`);

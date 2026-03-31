@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 const { genkit, z } = require('genkit');
 const { googleAI } = require('@genkit-ai/googleai');
 const axios = require('axios');
