@@ -45,10 +45,12 @@ exports.vconIngest = onRequest(async (req, res) => {
             vconData = vconData.document;
         }
         
-        // Flexible key mapping for legacy UVConEmitter field names
-        // Map common variations to standardized field names
+        // Flexible key mapping for IETF vCon format and legacy field names
+        // IETF vCon structure: { "vcon": "0.0.1", "created_at": "...", "parties": [{ "name": "...", "did": "..." }] }
         const normalizedData = {
-            agent_did: vconData.agent_did
+            // Extract agent_did from nested parties array (IETF vCon format) or legacy fields
+            agent_did: vconData.parties?.[0]?.did  // IETF vCon: parties[0].did
+                || vconData.agent_did
                 || vconData.agentDid
                 || vconData.AgentDID
                 || vconData['Source DID']
@@ -57,15 +59,16 @@ exports.vconIngest = onRequest(async (req, res) => {
                 || vconData.did
                 || vconData.DID,
             
-            timestamp: vconData.timestamp
+            // Extract timestamp from created_at (IETF vCon format) or legacy fields
+            timestamp: vconData.created_at  // IETF vCon: created_at
+                || vconData.timestamp
                 || vconData.Timestamp
                 || vconData.time
                 || vconData.Time
-                || vconData.created_at
                 || vconData.createdAt
                 || new Date().toISOString(), // Fallback to current time
             
-            // Preserve all other fields
+            // Preserve all other fields including vcon version, parties array, etc.
             ...vconData
         };
 
@@ -76,6 +79,8 @@ exports.vconIngest = onRequest(async (req, res) => {
         console.log('[vconIngest] Normalized data:', {
             agent_did: normalizedData.agent_did,
             timestamp: normalizedData.timestamp,
+            vcon_version: vconData.vcon,
+            party_name: vconData.parties?.[0]?.name,
             otherFields: Object.keys(normalizedData).filter(k => k !== 'agent_did' && k !== 'timestamp')
         });
         
@@ -83,10 +88,12 @@ exports.vconIngest = onRequest(async (req, res) => {
         if (!normalizedData.agent_did) {
             console.error('[vconIngest] Missing agent_did after normalization');
             console.error('[vconIngest] Available keys:', Object.keys(vconData));
+            console.error('[vconIngest] Parties array:', vconData.parties);
             return res.status(400).json({
                 error: 'Missing required field: agent_did (or equivalent)',
                 receivedKeys: Object.keys(vconData),
-                hint: 'Expected one of: agent_did, agentDid, AgentDID, Source DID, sourceDid, source_did, did, DID'
+                partiesArray: vconData.parties,
+                hint: 'Expected parties[0].did (IETF vCon) or one of: agent_did, agentDid, AgentDID, Source DID, sourceDid, source_did, did, DID'
             });
         }
 
