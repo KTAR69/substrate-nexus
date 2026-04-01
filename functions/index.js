@@ -68,6 +68,10 @@ exports.vconIngest = onRequest(async (req, res) => {
                 || vconData.createdAt
                 || new Date().toISOString(), // Fallback to current time
             
+            // Mock telemetry for Android UI (Phase 1 demo)
+            battery: vconData.battery !== undefined ? vconData.battery : 100,  // Default 100%
+            status: vconData.status || 'ACTIVE',  // Default ACTIVE
+            
             // Preserve all other fields including vcon version, parties array, etc.
             ...vconData
         };
@@ -281,6 +285,7 @@ function buildAgentContext(eventData) {
 /**
  * getLatestCommand - HTTP endpoint for agents to poll for commands
  * GET /getLatestCommand?agent_did=<did>
+ * Returns HTTP 200 with empty command when queue is empty (prevents UE5 polling errors)
  */
 exports.getLatestCommand = onRequest(async (req, res) => {
     try {
@@ -290,43 +295,104 @@ exports.getLatestCommand = onRequest(async (req, res) => {
             return res.status(400).json({ error: 'Missing agent_did parameter' });
         }
 
-        // Query command_queue for this agent, ordered by priority (desc) then created_at (desc)
+        // Query command_queue for this agent
+        // Simplified query - just filter by agent and expiration, then sort in memory
         const snapshot = await db.collection('command_queue')
             .where('agent_did', '==', agentDid)
             .where('expires_at', '>', admin.firestore.Timestamp.now())
-            .orderBy('expires_at', 'desc')
-            .orderBy('priority', 'desc')
-            .orderBy('created_at', 'desc')
-            .limit(1)
             .get();
 
         if (snapshot.empty) {
+            // Return HTTP 200 with "none" command to prevent UE5 polling errors
             return res.status(200).json({
                 success: true,
-                command: null,
+                command: 'none',
                 message: 'No pending commands'
             });
         }
 
-        const commandDoc = snapshot.docs[0];
-        const commandData = commandDoc.data();
+        // Sort by priority (desc) then created_at (desc) in memory
+        const commands = snapshot.docs
+            .map(doc => ({ id: doc.id, ref: doc.ref, ...doc.data() }))
+            .sort((a, b) => {
+                // Priority descending (higher priority first)
+                if (b.priority !== a.priority) {
+                    return b.priority - a.priority;
+                }
+                // Then by created_at descending (newer first)
+                return b.created_at?.toMillis() - a.created_at?.toMillis();
+            });
+
+        const command = commands[0];
 
         // Delete the command after retrieving (one-time use)
-        await commandDoc.ref.delete();
+        await command.ref.delete();
 
-        console.log('[getLatestCommand] Retrieved command:', commandDoc.id, 'for agent:', agentDid);
+        console.log('[getLatestCommand] ✅ Retrieved command:', command.id, 'for agent:', agentDid);
 
         res.status(200).json({
             success: true,
-            command: commandData.command,
-            command_id: commandDoc.id,
-            priority: commandData.priority,
-            source: commandData.source,
-            created_at: commandData.created_at
+            command: command.command,
+            command_id: command.id,
+            priority: command.priority,
+            source: command.source,
+            created_at: command.created_at
         });
 
     } catch (error) {
-        console.error('[getLatestCommand] Error:', error);
+        console.error('[getLatestCommand] ❌ Error:', error);
+        // Return HTTP 200 with error info to prevent UE5 polling spam
+        res.status(200).json({
+            success: false,
+            command: 'none',
+            error: error.message
+        });
+    }
+});
+
+/**
+ * sendCommand - HTTP endpoint for Android app to send commands to agents
+ * POST /sendCommand
+ * Body: { "agent_did": "did:key:...", "command": "DEPLOY_SCOUT", "priority": 1 }
+ */
+exports.sendCommand = onRequest(async (req, res) => {
+    try {
+        if (req.method !== 'POST') {
+            return res.status(405).json({ error: 'Method not allowed' });
+        }
+
+        const { agent_did, command, priority } = req.body;
+
+        // Validate required fields
+        if (!agent_did || !command) {
+            return res.status(400).json({
+                error: 'Missing required fields: agent_did, command'
+            });
+        }
+
+        // Default priority to 1 (player commands override AI)
+        const commandPriority = priority !== undefined ? priority : 1;
+
+        // Write command to command_queue
+        const commandRef = await db.collection('command_queue').add({
+            agent_did: agent_did,
+            command: command,
+            priority: commandPriority,
+            source: 'android',
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+            expires_at: admin.firestore.Timestamp.fromMillis(Date.now() + 30000) // 30 second TTL
+        });
+
+        console.log('[sendCommand] ✅ Command queued:', commandRef.id, 'for agent:', agent_did, 'command:', command);
+
+        res.status(200).json({
+            success: true,
+            command_id: commandRef.id,
+            message: 'Command queued successfully'
+        });
+
+    } catch (error) {
+        console.error('[sendCommand] ❌ Error:', error);
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
