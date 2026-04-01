@@ -21,15 +21,20 @@ const NVIDIA_CONFIG = {
 };
 
 /**
- * vconIngest - Ingests vCon telemetry from UE5 agents
+ * vconIngest - Ingests vCon telemetry from UE5 agents via UVConEmitter
  * Triggered by HTTP POST from UE5 Blueprints
- * Supports both Firebase flat format and MongoDB Atlas wrapped format
+ * Handles MongoDB Atlas format with flexible key mapping
+ * Accepts paths: /vconIngest or /vconIngest/action/insertOne
  */
 exports.vconIngest = onRequest(async (req, res) => {
     try {
         if (req.method !== 'POST') {
             return res.status(405).json({ error: 'Method not allowed' });
         }
+
+        // Log raw payload for debugging UVConEmitter format
+        console.log('[vconIngest] Raw request path:', req.path);
+        console.log('[vconIngest] Raw payload:', JSON.stringify(req.body, null, 2));
 
         let vconData = req.body;
         
@@ -40,19 +45,63 @@ exports.vconIngest = onRequest(async (req, res) => {
             vconData = vconData.document;
         }
         
-        // Validate required fields
-        if (!vconData.agent_did || !vconData.timestamp) {
-            console.error('[vconIngest] Validation failed. Received payload:', JSON.stringify(req.body).substring(0, 500));
-            return res.status(400).json({ error: 'Missing required fields: agent_did, timestamp' });
+        // Flexible key mapping for legacy UVConEmitter field names
+        // Map common variations to standardized field names
+        const normalizedData = {
+            agent_did: vconData.agent_did
+                || vconData.agentDid
+                || vconData.AgentDID
+                || vconData['Source DID']
+                || vconData.sourceDid
+                || vconData.source_did
+                || vconData.did
+                || vconData.DID,
+            
+            timestamp: vconData.timestamp
+                || vconData.Timestamp
+                || vconData.time
+                || vconData.Time
+                || vconData.created_at
+                || vconData.createdAt
+                || new Date().toISOString(), // Fallback to current time
+            
+            // Preserve all other fields
+            ...vconData
+        };
+
+        // Override with normalized values
+        normalizedData.agent_did = normalizedData.agent_did;
+        normalizedData.timestamp = normalizedData.timestamp;
+
+        console.log('[vconIngest] Normalized data:', {
+            agent_did: normalizedData.agent_did,
+            timestamp: normalizedData.timestamp,
+            otherFields: Object.keys(normalizedData).filter(k => k !== 'agent_did' && k !== 'timestamp')
+        });
+        
+        // Validate required fields after normalization
+        if (!normalizedData.agent_did) {
+            console.error('[vconIngest] Missing agent_did after normalization');
+            console.error('[vconIngest] Available keys:', Object.keys(vconData));
+            return res.status(400).json({
+                error: 'Missing required field: agent_did (or equivalent)',
+                receivedKeys: Object.keys(vconData),
+                hint: 'Expected one of: agent_did, agentDid, AgentDID, Source DID, sourceDid, source_did, did, DID'
+            });
+        }
+
+        if (!normalizedData.timestamp) {
+            console.warn('[vconIngest] Missing timestamp, using current time');
         }
 
         // Write to event_stream collection
         const docRef = await db.collection('event_stream').add({
-            ...vconData,
-            ingested_at: admin.firestore.FieldValue.serverTimestamp()
+            ...normalizedData,
+            ingested_at: admin.firestore.FieldValue.serverTimestamp(),
+            raw_payload: req.body // Store original for debugging
         });
 
-        console.log('[vconIngest] Stored event:', docRef.id, 'for agent:', vconData.agent_did);
+        console.log('[vconIngest] ✅ Stored event:', docRef.id, 'for agent:', normalizedData.agent_did);
 
         // Return MongoDB Atlas compatible response format
         res.status(200).json({
@@ -63,7 +112,7 @@ exports.vconIngest = onRequest(async (req, res) => {
         });
 
     } catch (error) {
-        console.error('[vconIngest] Error:', error);
+        console.error('[vconIngest] ❌ Error:', error);
         res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
