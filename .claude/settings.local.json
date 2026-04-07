@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(firebase deploy:*)",
+      "Bash(bash .husky/pre-commit)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(node_modules/.bin/husky --version)",
+      "Bash(sh -e .husky/pre-commit)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\owlta\\OneDrive\\Documents\\Unreal Projects\\NexusHub_TexasRoot\\Source\\NexusHub_TexasRoot"
+    ]
+  }
+}
