@@ -351,49 +351,62 @@ exports.getLatestCommand = onRequest(async (req, res) => {
 });
 
 /**
- * sendCommand - HTTP endpoint for Android app to send commands to agents
+ * sendCommand - NIM-Ready Cloud Function for structured telco payload dispatch
  * POST /sendCommand
- * Body: { "agent_did": "did:key:...", "command": "DEPLOY_SCOUT", "priority": 1 }
+ * Body: { "agent_did": "...", "priority": 1, "source": "...", "payload": { "action_intent": "...", ... } }
  */
 exports.sendCommand = onRequest(async (req, res) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    if (req.method === 'OPTIONS') {
+        res.set('Access-Control-Allow-Methods', 'POST');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
+        return res.status(204).send('');
+    }
+
+    const { agent_did, priority, source, payload } = req.body;
+
+    if (!agent_did || !payload || !payload.action_intent) {
+        return res.status(400).json({ error: 'Missing agent_did or payload.action_intent' });
+    }
+
+    const normalizedCommand = {
+        agent_did: agent_did,
+        priority: priority || 1,
+        source: source || 'android_guardian_app',
+        status: 'pending',
+        payload: {
+            action_intent: payload.action_intent,
+            spatial_directives: {
+                waypoints: payload.spatial_directives?.waypoints || []
+            },
+            network_directives: {
+                tx_gain: payload.network_directives?.tx_gain || 0.0,
+                bandwidth_allocation: payload.network_directives?.bandwidth_allocation || 0.0,
+                preferred_nodes: payload.network_directives?.preferred_nodes || []
+            },
+            dao_signal: payload.dao_signal || 'CONSENSUS_PENDING'
+        },
+        created_at: admin.firestore.FieldValue.serverTimestamp(),
+        expires_at: admin.firestore.Timestamp.fromMillis(Date.now() + 30000)
+    };
+
     try {
-        if (req.method !== 'POST') {
-            return res.status(405).json({ error: 'Method not allowed' });
-        }
+        const commandRef = await db.collection('command_queue').add(normalizedCommand);
 
-        const { agent_did, command, priority } = req.body;
-
-        // Validate required fields
-        if (!agent_did || !command) {
-            return res.status(400).json({
-                error: 'Missing required fields: agent_did, command'
-            });
-        }
-
-        // Default priority to 1 (player commands override AI)
-        const commandPriority = priority !== undefined ? priority : 1;
-
-        // Write command to command_queue
-        const commandRef = await db.collection('command_queue').add({
+        await db.collection('event_stream').add({
+            event_type: 'COMMAND_DISPATCHED',
             agent_did: agent_did,
-            command: command,
-            priority: commandPriority,
-            source: 'android',
-            created_at: admin.firestore.FieldValue.serverTimestamp(),
-            expires_at: admin.firestore.Timestamp.fromMillis(Date.now() + 30000) // 30 second TTL
+            vcon: {
+                vcon: "0.0.1",
+                created_at: new Date().toISOString(),
+                dialog: [{ type: "action", body: `Intent: ${payload.action_intent} | TxGain: ${normalizedCommand.payload.network_directives.tx_gain}` }]
+            },
+            nim_routed: false
         });
 
-        console.log('[sendCommand] ✅ Command queued:', commandRef.id, 'for agent:', agent_did, 'command:', command);
-
-        res.status(200).json({
-            success: true,
-            command_id: commandRef.id,
-            message: 'Command queued successfully'
-        });
-
+        return res.status(200).json({ success: true, command_id: commandRef.id });
     } catch (error) {
-        console.error('[sendCommand] ❌ Error:', error);
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
